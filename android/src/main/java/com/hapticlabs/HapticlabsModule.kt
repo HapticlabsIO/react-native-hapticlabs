@@ -49,6 +49,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         data = String(dataBytes, StandardCharsets.UTF_8)
     } catch (e: IOException) {
         e.printStackTrace()
+        promise.reject("Error reading file", e)
+        return
     }
 
     // Parse the file to a JSON
@@ -113,6 +115,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
             }, startTime + audioDelays[i])
         }
         handler.postAtTime({
+            promise.resolve(null);
             Log.i("hla", "Vibration happened at " + SystemClock.uptimeMillis())
             vibrator.vibrate(vibrationEffect)
         }, startTime)

@@ -1,0 +1,22 @@
+{
+    "ProjectName": "good project",
+    "TrackName": "good track",
+    "Duration": "637",
+    "Timings": [
+        250,
+        135,
+        250
+    ],
+    "Amplitudes": [
+        255,
+        0,
+        255
+    ],
+    "Repeat": -1,
+    "Audios": [
+        {
+            "Time": 0,
+            "Filename": "08e9d2f44da2463aba8f7ba62187135e.wav"
+        }
+    ]
+}
