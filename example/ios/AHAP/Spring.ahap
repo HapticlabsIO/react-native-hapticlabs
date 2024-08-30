@@ -1,0 +1,103 @@
+{
+	"Version": 1,
+	"Metadata": {
+		"Project": "IOS samples",
+		"Created": "03 May 2024",
+		"Description": "A Hapticlabs Track converted to an AHAP file.\nPROJECT_NAME=IOS samples\nTRACK_NAME=Spring\nTOTAL_DURATION=0.56\nAUDIO_FILES=[]\nAHAP_FILES=[]"
+	},
+	"Pattern": [
+		{
+			"Event": {
+				"EventType": "HapticTransient",
+				"Time": 0.006002400960384154,
+				"EventParameters": [
+					{
+						"ParameterID": "HapticIntensity",
+						"ParameterValue": 1
+					},
+					{
+						"ParameterID": "HapticSharpness",
+						"ParameterValue": 0.02199999999999998
+					}
+				]
+			}
+		},
+		{
+			"ParameterCurve": {
+				"ParameterID": "HapticIntensityControl",
+				"Time": 0,
+				"ParameterCurveControlPoints": [
+					{
+						"Time": 0,
+						"ParameterValue": 1
+					}
+				]
+			}
+		},
+		{
+			"Event": {
+				"EventType": "HapticContinuous",
+				"Time": 0.06300480192076831,
+				"EventDuration": 0.497,
+				"EventParameters": [
+					{
+						"ParameterID": "HapticIntensity",
+						"ParameterValue": 1
+					},
+					{
+						"ParameterID": "HapticSharpness",
+						"ParameterValue": 0
+					}
+				]
+			}
+		},
+		{
+			"ParameterCurve": {
+				"ParameterID": "HapticSharpnessControl",
+				"Time": 0.06300480192076831,
+				"ParameterCurveControlPoints": [
+					{
+						"Time": 0,
+						"ParameterValue": 1
+					},
+					{
+						"Time": 0.16566666666666666,
+						"ParameterValue": 0.37725160860576423
+					},
+					{
+						"Time": 0.3313333333333333,
+						"ParameterValue": -0.2884284999967246
+					},
+					{
+						"Time": 0.49700000000000005,
+						"ParameterValue": -1
+					}
+				]
+			}
+		},
+		{
+			"ParameterCurve": {
+				"ParameterID": "HapticIntensityControl",
+				"Time": 0.06300480192076831,
+				"ParameterCurveControlPoints": [
+					{
+						"Time": 0,
+						"ParameterValue": 0.9
+					},
+					{
+						"Time": 0.16566666666666666,
+						"ParameterValue": 0.3703560367844578
+					},
+					{
+						"Time": 0.3313333333333333,
+						"ParameterValue": 0.1243051560929748
+					},
+					{
+						"Time": 0.49700000000000005,
+						"ParameterValue": 0.009999999999999926
+					}
+				]
+			}
+		}
+	]
+}

@@ -2946,7 +2946,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/metro-config@npm:0.75.2":
+"@react-native/metro-config@npm:^0.75.2":
   version: 0.75.2
   resolution: "@react-native/metro-config@npm:0.75.2"
   dependencies:
@@ -10860,7 +10860,7 @@ __metadata:
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
     "@react-native/babel-preset": 0.75.2
-    "@react-native/metro-config": 0.75.2
+    "@react-native/metro-config": ^0.75.2
     "@react-native/typescript-config": 0.75.2
     react: 18.3.1
     react-native: 0.75.2

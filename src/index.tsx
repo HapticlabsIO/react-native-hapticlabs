@@ -18,15 +18,37 @@ const Hapticlabs = NativeModules.Hapticlabs
     );
 
 export function playHLA(path: string): Promise<void> {
-  return Hapticlabs.playHLA(path);
+  if (Platform.OS === 'android') {
+    return Hapticlabs.playHLA(path);
+  } else {
+    return Promise.reject(new Error('HLA is only supported on Android'));
+  }
+}
+
+export function playAHAP(path: string): Promise<void> {
+  if (Platform.OS === 'ios') {
+    return Hapticlabs.playAHAP(path);
+  } else {
+    return Promise.reject(new Error('AHAP is only supported on iOS'));
+  }
 }
 
 export function playOGG(path: string): Promise<void> {
-  return Hapticlabs.playOGG(path);
+  if (Platform.OS === 'android') {
+    return Hapticlabs.playOGG(path);
+  } else {
+    return Promise.reject(new Error('OGG is only supported on Android'));
+  }
 }
 
 export function playAndroidHaptics(directoryPath: string): Promise<void> {
-  return Hapticlabs.playAndroidHaptics(directoryPath);
+  if (Platform.OS === 'android') {
+    return Hapticlabs.playAndroidHaptics(directoryPath);
+  } else {
+    return Promise.reject(
+      new Error('Android haptics are only supported on Android')
+    );
+  }
 }
 
 export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =

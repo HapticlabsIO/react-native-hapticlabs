@@ -10,47 +10,44 @@ import RNFS from 'react-native-fs';
 
 export default function App() {
   useEffect(() => {
-    copyAssetFolder('rarri', RNFS.DocumentDirectoryPath + '/rarri');
+    if (Platform.OS === 'ios') {
+      copyAssetFolder(
+        RNFS.MainBundlePath + '/AHAP',
+        RNFS.DocumentDirectoryPath + '/AHAP'
+      );
+    } else {
+      copyAssetFolder('rarri', RNFS.DocumentDirectoryPath + '/rarri');
+    }
   }, []);
 
   useEffect(() => {
-    getFilesThatNeedLoading().then((filesThatNeedLoading) => {
-      for (const file of filesThatNeedLoading) {
-        RNFS.exists(file.target).then((exists) => {
-          if (!exists || true) {
-            if (Platform.OS === 'ios') {
-              RNFS.copyFile(file.origin, file.target);
-            } else {
-              RNFS.copyFileAssets(file.origin, file.target);
-              console.log('Copied file from assets');
-            }
-          }
-        });
-      }
-    });
-  }, []);
+    if (Platform.OS === 'ios') {
+      playAHAP(RNFS.DocumentDirectoryPath + '/AHAP/8Bit.ahap').then(() => {
+        console.log('Played ahap');
+      });
+    } else {
+      getExampleAndroidHapticTrackDirectory()
+        .then((directory) => {
+          return playHLA(directory + '/Spring.hla')
+            .then(() => {
+              console.log('HLA played');
+              return playOGG(directory + '/Spring.ogg');
+            })
+            .then(() => {
+              console.log('OGG played');
+              console.log('Level', androidHapticSupportLevel);
+            })
+            .then(() => {
+              return playAndroidHaptics(RNFS.DocumentDirectoryPath + '/rarri');
+            })
+            .then(() => {
+              console.log('Android haptics played');
+            });
+        })
 
-  useEffect(() => {
-    getExampleAndroidHapticTrackDirectory()
-      .then((directory) => {
-        return playHLA(directory + '/Spring.hla')
-          .then(() => {
-            console.log('HLA played');
-            return playOGG(directory + '/Spring.ogg');
-          })
-          .then(() => {
-            console.log('OGG played');
-            console.log('Level', androidHapticSupportLevel);
-          }).then(() => {
-            return playAndroidHaptics(RNFS.DocumentDirectoryPath + '/rarri')
-          }).then(() => {
-            console.log('Android haptics played');
-          });
-      })
-
-      .catch(console.error);
+        .catch(console.error);
+    }
   });
-
 
   return (
     <View style={styles.container}>
