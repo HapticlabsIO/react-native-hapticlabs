@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Platform } from 'react-native';
-import { multiply, playHLA } from 'react-native-hapticlabs';
+import { multiply, playHLA, playOGG } from 'react-native-hapticlabs';
 import RNFS from 'react-native-fs';
 
 export default function App() {
@@ -28,11 +28,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    getExampleAndroidHapticTrackDirectory().then((directory) => {
-      playHLA(directory + '/Spring.hla')
-        .then(() => console.log('Haptic feedback played'))
-        .catch(console.error);
-    });
+    getExampleAndroidHapticTrackDirectory()
+      .then((directory) => {
+        return playHLA(directory + '/Spring.hla')
+          .then(() => {
+            console.log('HLA played');
+            return playOGG(directory + '/Spring.ogg');
+          })
+          .then(() => {
+            console.log('OGG played');
+          });
+      })
+      .catch(console.error);
   });
 
   return (

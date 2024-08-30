@@ -21,6 +21,10 @@ export function playHLA(path: string): Promise<void> {
   return Hapticlabs.playHLA(path);
 }
 
+export function playOGG(path: string): Promise<void> {
+  return Hapticlabs.playOGG(path);
+}
+
 export function multiply(a: number, b: number): Promise<number> {
   return Hapticlabs.multiply(a, b);
 }

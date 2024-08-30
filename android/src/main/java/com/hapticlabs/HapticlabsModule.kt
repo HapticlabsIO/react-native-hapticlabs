@@ -21,10 +21,14 @@ import java.nio.charset.StandardCharsets
 import android.media.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import android.media.audiofx.HapticGenerator
 
 
 class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var handler: Handler? = null
 
   override fun getName(): String {
     return NAME
@@ -105,16 +109,18 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
         val syncDelay = 0
 
-        val handler = Handler()
-
         val startTime = SystemClock.uptimeMillis() + syncDelay
 
+        if (handler == null) {
+          handler = Handler()
+        }
+
         for (i in 0 until audiosArray.size()) {
-            handler.postAtTime({
+            handler?.postAtTime({
                 audioTrackPlayers[i].playAudio()
             }, startTime + audioDelays[i])
         }
-        handler.postAtTime({
+        handler?.postAtTime({
             promise.resolve(null);
             Log.i("hla", "Vibration happened at " + SystemClock.uptimeMillis())
             vibrator.vibrate(vibrationEffect)
@@ -122,6 +128,45 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         Log.i("hla", "Vibration scheduled for $startTime")
     }
   }
+
+  @ReactMethod
+  fun playOGG(path: String, promise: Promise) {
+    Log.i("ogg", "Trying to play audio file: $path")
+    mediaPlayer?.release()
+    mediaPlayer = MediaPlayer()
+    try {
+        mediaPlayer?.setDataSource(path)
+    } catch (e: IOException) {
+        e.printStackTrace()
+        Log.i("ogg", "Failed to play audio file: $path $e")
+        promise.reject("Error reading file", e)
+        return
+    }
+    Log.i("ogg", "Playing audio file: $path")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        mediaPlayer?.setAudioAttributes(
+            AudioAttributes.Builder().setHapticChannelsMuted(false).build()
+        )
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val isAvailable = HapticGenerator.isAvailable()
+        if (isAvailable) {
+            val generator = HapticGenerator.create(mediaPlayer?.audioSessionId ?: 0)
+            generator?.setEnabled(false)
+        }
+    }
+    try {
+        mediaPlayer?.prepare()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    mediaPlayer?.start()
+    mediaPlayer?.setOnCompletionListener { mp ->
+        // Playback completed, release resources
+        mp.release()
+        promise.resolve(null)
+    }
+}
 
     // Method to get the document directory path
   private fun getDocumentDirectoryPath(): String {
