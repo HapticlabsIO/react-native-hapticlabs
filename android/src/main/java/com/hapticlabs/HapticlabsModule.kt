@@ -7,6 +7,8 @@ import com.facebook.react.bridge.Promise
 import android.content.Context
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
+import android.os.VibratorManager
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -43,7 +45,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun playHLA(path: String, promise: Promise)  {
-    var data = ""
+    val data: String
     try {
         val file = File(path)
         val fis = FileInputStream(file)
@@ -83,7 +85,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Prepare the vibration
         val vibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, repeat)
-        val vibrator = reactContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_SERVICE) as VibratorManager
+        val vibrator = vibratorManager.getDefaultVibrator()
 
         val audioTrackPlayers = Array(audiosArray.size()) { AudioTrackPlayer("") }
         val audioDelays = IntArray(audiosArray.size())
@@ -112,7 +115,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         val startTime = SystemClock.uptimeMillis() + syncDelay
 
         if (handler == null) {
-          handler = Handler()
+          handler = Handler(Looper.getMainLooper())
         }
 
         for (i in 0 until audiosArray.size()) {
@@ -152,7 +155,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         val isAvailable = HapticGenerator.isAvailable()
         if (isAvailable) {
             val generator = HapticGenerator.create(mediaPlayer?.audioSessionId ?: 0)
-            generator?.setEnabled(false)
+            generator.setEnabled(false)
         }
     }
     try {
@@ -253,7 +256,6 @@ class AudioTrackPlayer(private val filePath: String) {
                 when (outIndex) {
                     MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED -> outputBuffers = codec!!.outputBuffers
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
-                        val newFormat = codec!!.outputFormat
                     }
                     MediaCodec.INFO_TRY_AGAIN_LATER -> {}
                     else -> {
