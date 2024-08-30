@@ -6,6 +6,9 @@ module.exports = {
     ios: {
       automaticPodsInstallation: true,
     },
+    android: {
+      packageName: 'hapticlabs.example',
+    },
   },
   dependencies: {
     [pkg.name]: {
