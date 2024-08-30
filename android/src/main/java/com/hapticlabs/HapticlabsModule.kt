@@ -36,7 +36,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
     private fun determineHapticSupportLevel(): Int {
         var level = 0
-        val vibrator = reactContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        val vibrator = vibratorManager.getDefaultVibrator();
         if (vibrator != null) {
             if (vibrator.hasVibrator()) {
                 level = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

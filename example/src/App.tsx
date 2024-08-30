@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Platform } from 'react-native';
 import {
   androidHapticSupportLevel,
-  multiply,
   playAndroidHaptics,
   playHLA,
   playOGG,
@@ -48,7 +47,7 @@ export default function App() {
             console.log('Android haptics played');
           });
       })
-      
+
       .catch(console.error);
   });
 
