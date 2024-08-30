@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, View, Text, Platform } from 'react-native';
 import {
   androidHapticSupportLevel,
+  playAHAP,
   playAndroidHaptics,
   playHLA,
   playOGG,
@@ -11,10 +12,16 @@ import RNFS from 'react-native-fs';
 export default function App() {
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      copyAssetFolder(
+      copyFolder(
         RNFS.MainBundlePath + '/AHAP',
         RNFS.DocumentDirectoryPath + '/AHAP'
-      );
+      ).then(() => {
+        return getFilesThatNeedLoading().then((files) => {
+          files.forEach((file) => {
+            RNFS.copyFile(file.origin, file.target);
+          });
+        });
+      });
     } else {
       copyAssetFolder('rarri', RNFS.DocumentDirectoryPath + '/rarri');
     }
@@ -22,7 +29,12 @@ export default function App() {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      playAHAP(RNFS.DocumentDirectoryPath + '/AHAP/8Bit.ahap').then(() => {
+      RNFS.exists(RNFS.DocumentDirectoryPath + '/AHAP/9Bit.ahap').then(
+        (exists) => {
+          console.log('exissssssssssssssssts', exists);
+        }
+      );
+      playAHAP(RNFS.DocumentDirectoryPath + '/AHAP/9Bit.ahap').then(() => {
         console.log('Played ahap');
       });
     } else {
@@ -118,13 +130,14 @@ const copyFolder = async (source: string, target: string) => {
 
     // Get the list of files and directories in the source directory
     const items = await RNFS.readDir(source);
+    console.log('copying -------------------------------', items);
 
     // Iterate through each item
     for (const item of items) {
       const sourcePath = item.path;
       const targetPath = `${target}/${item.name}`;
 
-      if (item.isFile()) {
+      if (item.isFile() && !(await RNFS.exists(targetPath))) {
         // Copy the file to the target directory
         await RNFS.copyFile(sourcePath, targetPath);
       } else if (item.isDirectory()) {
@@ -150,7 +163,7 @@ const copyAssetFolder = async (source: string, target: string) => {
       const sourcePath = item.path;
       const targetPath = `${target}/${item.name}`;
 
-      if (item.isFile()) {
+      if (item.isFile() && !(await RNFS.exists(targetPath))) {
         // Copy the file to the target directory
         await RNFS.copyFileAssets(sourcePath, targetPath);
       } else if (item.isDirectory()) {

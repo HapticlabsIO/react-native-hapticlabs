@@ -32,13 +32,13 @@ class AHAPSyncPlayer {
 }
 
 struct AHAP: Codable {
-    let version: Int
-    let metadata: Metadata
+    let Version: Int
+    let Metadata: Metadata
     
     struct Metadata: Codable {
-        let project: String
-        let created: String
-        let description: String
+        let Project: String
+        let Created: String
+        let Description: String
     }
 }
 
@@ -86,10 +86,11 @@ class Hapticlabs: NSObject {
     let decoder = JSONDecoder()
 
     var otherPaths: [String] = []
-    if let ahap = try? decoder.decode(AHAP.self, from: data) {
+    do {
+      let ahap = try decoder.decode(AHAP.self, from: data)
       // Code to execute when decoding is successful
       // Extract AHAP_FILES from the description
-      let description = ahap.metadata.description
+      let description = ahap.Metadata.Description
       var descriptionParts = description.split(separator: "\n")
 
       if let supportingAHAPDescriptionPartIndex = descriptionParts.firstIndex(where: { $0.starts(with: "AHAP_FILES=") }) {
@@ -107,8 +108,10 @@ class Hapticlabs: NSObject {
               }
           }
       }
-    } else {
-      reject("Error", "Failed to parse AHAP", nil)
+
+    } catch {
+      reject("Error", "Failed to parse AHAP \(error)", nil)
+      return
     }
 
     // Log the paths for good measure
@@ -118,7 +121,8 @@ class Hapticlabs: NSObject {
     playAHAPs(ahapPaths: [ahapPath] + otherPaths, resolve: resolve, reject: reject)
           
       } catch {
-          reject("Error", "Failed to load ahap",nil)
+          reject("Error", "Failed to load ahap: " + ahapPath + " because \(error)",nil)
+          return
       }
   }
   

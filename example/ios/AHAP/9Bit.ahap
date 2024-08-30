@@ -3,9 +3,22 @@
 	"Metadata": {
 		"Project": "IOS samples",
 		"Created": "03 May 2024",
-		"Description": "A Hapticlabs Track converted to an AHAP file.\nPROJECT_NAME=IOS samples\nTRACK_NAME=8Bit\nTOTAL_DURATION=0.87\nAUDIO_FILES=[]\nAHAP_FILES=[]"
+		"Description": "A Hapticlabs Track converted to an AHAP file.\nPROJECT_NAME=IOS samples\nTRACK_NAME=8Bit\nTOTAL_DURATION=0.87\nAUDIO_FILES=[4bab56049a1248eeac8397f6c3f850e9short.wav]\nAHAP_FILES=[CatPurring.ahap]"
 	},
 	"Pattern": [
+		{
+			"Event": {
+				"Time": 0,
+				"EventType": "AudioCustom",
+				"EventWaveformPath": "4bab56049a1248eeac8397f6c3f850e9short.wav",
+				"EventParameters": [
+					{
+						"ParameterID": "AudioVolume",
+						"ParameterValue": 1
+					}
+				]
+			}
+		},
 		{
 			"Event": {
 				"EventType": "HapticContinuous",

@@ -27,6 +27,7 @@ export function playHLA(path: string): Promise<void> {
 
 export function playAHAP(path: string): Promise<void> {
   if (Platform.OS === 'ios') {
+    console.log(Hapticlabs);
     return Hapticlabs.playAHAP(path);
   } else {
     return Promise.reject(new Error('AHAP is only supported on iOS'));
