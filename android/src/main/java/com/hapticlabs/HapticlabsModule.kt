@@ -29,18 +29,69 @@ import android.media.audiofx.HapticGenerator
 class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
+    private val hapticSupportLevel = determineHapticSupportLevel()
+
     private var mediaPlayer: MediaPlayer? = null
     private var handler: Handler? = null
+
+    private fun determineHapticSupportLevel(): Int {
+        var level = 0
+        val vibrator = reactContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+        if (vibrator != null) {
+            if (vibrator.hasVibrator()) {
+                level = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (vibrator.hasAmplitudeControl()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && HapticGenerator.isAvailable()) {
+                            3
+                        } else {
+                            2
+                        }
+                    } else {
+                        1
+                    }
+                } else {
+                    1
+                }
+            }
+        } else {
+            // Vibrator service not available
+            level = 0
+        }
+        return level
+    }
+
+    override fun getConstants(): Map<String, Any> {
+        val constants = HashMap<String, Any>()
+        constants["hapticSupportLevel"] = hapticSupportLevel
+        return constants
+    }
 
   override fun getName(): String {
     return NAME
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
   @ReactMethod
-  fun multiply(a: Double, b: Double, promise: Promise) {
-    promise.resolve(a * b)
+  fun playAndroidHaptics(directoryPath: String, promise: Promise) {
+    // Switch by hapticSupportLevel
+    when (hapticSupportLevel) {
+      0 -> {
+        Log.i("Hapticlabs", "Haptic feedback not supported on this device")
+        return // Do nothing
+      }
+      1 -> {
+        val path = directoryPath + "/1/main.hla"
+        return playHLA(path, promise)
+      }
+      2 -> {
+        val path = directoryPath + "/2/main.hla"
+        return playHLA(path, promise)
+      }
+      3 -> {
+        Log.i("Hapticlabs", "Full feedback")
+        val path = directoryPath + "/3/main.ogg"
+        return playOGG(path, promise)
+      }
+    }
   }
 
   @ReactMethod
@@ -85,11 +136,14 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Prepare the vibration
         val vibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, repeat)
-        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_SERVICE) as VibratorManager
+        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         val vibrator = vibratorManager.getDefaultVibrator()
 
         val audioTrackPlayers = Array(audiosArray.size()) { AudioTrackPlayer("") }
         val audioDelays = IntArray(audiosArray.size())
+
+        // Get the directory of the hla file
+        val directory = File(path).parent
 
         // Prepare the audio files
         for (i in 0 until audiosArray.size()) {
@@ -99,9 +153,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
             val time = audioObject.get("Time").asInt
 
             // Get the "Filename" value
-            val fileName = getDocumentDirectoryPath() + "/" + audioObject.get("Filename").asString
-
-            Log.i("hla", "Time: $time Filename: $fileName")
+            val fileName = directory + "/" + audioObject.get("Filename").asString
 
             val audioTrackPlayer = AudioTrackPlayer(fileName)
             audioTrackPlayer.preload()
@@ -112,11 +164,11 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
         val syncDelay = 0
 
-        val startTime = SystemClock.uptimeMillis() + syncDelay
-
         if (handler == null) {
           handler = Handler(Looper.getMainLooper())
         }
+
+        val startTime = SystemClock.uptimeMillis() + syncDelay
 
         for (i in 0 until audiosArray.size()) {
             handler?.postAtTime({
@@ -125,10 +177,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         }
         handler?.postAtTime({
             promise.resolve(null);
-            Log.i("hla", "Vibration happened at " + SystemClock.uptimeMillis())
             vibrator.vibrate(vibrationEffect)
         }, startTime)
-        Log.i("hla", "Vibration scheduled for $startTime")
     }
   }
 
@@ -169,12 +219,6 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         mp.release()
         promise.resolve(null)
     }
-}
-
-    // Method to get the document directory path
-  private fun getDocumentDirectoryPath(): String {
-      val documentDirectory = reactContext.filesDir
-      return documentDirectory.absolutePath
   }
 
   companion object {

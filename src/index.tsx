@@ -25,6 +25,13 @@ export function playOGG(path: string): Promise<void> {
   return Hapticlabs.playOGG(path);
 }
 
+export function playAndroidHaptics(directoryPath: string): Promise<void> {
+  return Hapticlabs.playAndroidHaptics(directoryPath);
+}
+
 export function multiply(a: number, b: number): Promise<number> {
   return Hapticlabs.multiply(a, b);
 }
+
+export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =
+  Hapticlabs.hapticSupportLevel ?? -1;

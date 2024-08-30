@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Platform } from 'react-native';
-import { multiply, playHLA, playOGG } from 'react-native-hapticlabs';
+import {
+  androidHapticSupportLevel,
+  multiply,
+  playAndroidHaptics,
+  playHLA,
+  playOGG,
+} from 'react-native-hapticlabs';
 import RNFS from 'react-native-fs';
 
 export default function App() {
-  const [result, setResult] = useState<number | undefined>();
-
   useEffect(() => {
-    multiply(3, 7).then(setResult);
+    copyAssetFolder('rarri', RNFS.DocumentDirectoryPath + '/rarri');
   }, []);
 
   useEffect(() => {
@@ -37,14 +41,21 @@ export default function App() {
           })
           .then(() => {
             console.log('OGG played');
+            console.log('Level', androidHapticSupportLevel);
+          }).then(() => {
+            return playAndroidHaptics(RNFS.DocumentDirectoryPath + '/rarri')
+          }).then(() => {
+            console.log('Android haptics played');
           });
       })
+      
       .catch(console.error);
   });
 
+
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Nothing lol</Text>
     </View>
   );
 }
@@ -88,7 +99,7 @@ async function getFilesThatNeedLoading() {
         {
           origin: 'ControllingHapticTrack/08e9d2f44da2463aba8f7ba62187135e.wav',
           target:
-            RNFS.DocumentDirectoryPath +
+            (await getExampleAndroidHapticTrackDirectory()) +
             '/08e9d2f44da2463aba8f7ba62187135e.wav',
         },
         {
@@ -103,3 +114,55 @@ async function getFilesThatNeedLoading() {
         },
       ];
 }
+
+const copyFolder = async (source: string, target: string) => {
+  try {
+    // Create the target directory if it doesn't exist
+    await RNFS.mkdir(target);
+
+    // Get the list of files and directories in the source directory
+    const items = await RNFS.readDir(source);
+
+    // Iterate through each item
+    for (const item of items) {
+      const sourcePath = item.path;
+      const targetPath = `${target}/${item.name}`;
+
+      if (item.isFile()) {
+        // Copy the file to the target directory
+        await RNFS.copyFile(sourcePath, targetPath);
+      } else if (item.isDirectory()) {
+        // Recursively copy the directory
+        await copyFolder(sourcePath, targetPath);
+      }
+    }
+  } catch (error) {
+    console.error('Error copying folder:', error);
+  }
+};
+
+const copyAssetFolder = async (source: string, target: string) => {
+  try {
+    // Create the target directory if it doesn't exist
+    await RNFS.mkdir(target);
+
+    // Get the list of files and directories in the source directory
+    const items = await RNFS.readDirAssets(source);
+
+    // Iterate through each item
+    for (const item of items) {
+      const sourcePath = item.path;
+      const targetPath = `${target}/${item.name}`;
+
+      if (item.isFile()) {
+        // Copy the file to the target directory
+        await RNFS.copyFileAssets(sourcePath, targetPath);
+      } else if (item.isDirectory()) {
+        // Recursively copy the directory
+        await copyAssetFolder(sourcePath, targetPath);
+      }
+    }
+  } catch (error) {
+    console.error('Error copying asset folder:', error);
+  }
+};
