@@ -71,7 +71,7 @@ android {
       minifyEnabled false
     }
   }
-  
+
   lintOptions {
     disable "GradleCompatible"
   }
