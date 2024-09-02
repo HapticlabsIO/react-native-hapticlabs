@@ -12,12 +12,14 @@ import android.os.VibratorManager
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
+import android.content.res.AssetManager
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import java.io.File
+import java.io.FileOutputStream
 import java.io.FileInputStream
+import java.io.InputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import android.media.*
@@ -25,6 +27,58 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import android.media.audiofx.HapticGenerator
 
+private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Boolean {
+    return try {
+        reactContext.assets.open(path).close()
+        true
+    } catch (e: IOException) {
+        false
+    }
+}
+
+private fun getUncompressedPath(path: String, reactContext: ReactApplicationContext): String {
+  if (isAssetPath(path, reactContext)) {
+    return getUncompressedAssetPath(path, reactContext)
+  } else {
+    return path
+  }
+}
+
+private fun getUncompressedAssetPath(assetName: String, reactContext: ReactApplicationContext): String {
+    val uncompressedDir = File(reactContext.filesDir, "hapticlabs_uncompressed")
+    if (!uncompressedDir.exists()) {
+        uncompressedDir.mkdirs()
+    }
+
+    val outFile = File(uncompressedDir, assetName)
+    val outDir = outFile.parentFile
+    if (!outDir.exists()) {
+        outDir.mkdirs()
+    }
+
+    if (outFile.exists()) {
+        return outFile.absolutePath
+    }
+
+    try {
+        val inputStream: InputStream = reactContext.assets.open(assetName)
+        val outputStream = FileOutputStream(outFile)
+
+        val buffer = ByteArray(1024)
+        var length: Int
+        while (inputStream.read(buffer).also { length = it } > 0) {
+            outputStream.write(buffer, 0, length)
+        }
+
+        inputStream.close()
+        outputStream.close()
+    } catch (e: IOException) {
+        e.printStackTrace()
+        // Handle error
+    }
+
+    return outFile.absolutePath
+}
 
 class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -76,7 +130,6 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     // Switch by hapticSupportLevel
     when (hapticSupportLevel) {
       0 -> {
-        Log.i("Hapticlabs", "Haptic feedback not supported on this device")
         return // Do nothing
       }
       1 -> {
@@ -88,7 +141,6 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         return playHLA(path, promise)
       }
       3 -> {
-        Log.i("Hapticlabs", "Full feedback")
         val path = directoryPath + "/3/main.ogg"
         return playOGG(path, promise)
       }
@@ -98,13 +150,16 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   @ReactMethod
   fun playHLA(path: String, promise: Promise)  {
     val data: String
+
+    val uncompressedPath = getUncompressedPath(path, reactContext)
+
     try {
-        val file = File(path)
-        val fis = FileInputStream(file)
-        val dataBytes = ByteArray(file.length().toInt())
-        fis.read(dataBytes)
-        fis.close()
-        data = String(dataBytes, StandardCharsets.UTF_8)
+      val file = File(uncompressedPath)
+      val fis = FileInputStream(file)
+      val dataBytes = ByteArray(file.length().toInt())
+      fis.read(dataBytes)
+      fis.close()
+      data = String(dataBytes, StandardCharsets.UTF_8)
     } catch (e: IOException) {
         e.printStackTrace()
         promise.reject("Error reading file", e)
@@ -140,11 +195,12 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         val vibrator = vibratorManager.getDefaultVibrator()
 
-        val audioTrackPlayers = Array(audiosArray.size()) { AudioTrackPlayer("") }
+        val audioTrackPlayers = Array(audiosArray.size()) { AudioTrackPlayer("", reactContext) }
         val audioDelays = IntArray(audiosArray.size())
 
         // Get the directory of the hla file
-        val directory = File(path).parent
+        val assetManager: AssetManager = reactContext.assets
+        val audioDirectoryPath = path.substringBeforeLast('/')
 
         // Prepare the audio files
         for (i in 0 until audiosArray.size()) {
@@ -154,9 +210,9 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
             val time = audioObject.get("Time").asInt
 
             // Get the "Filename" value
-            val fileName = directory + "/" + audioObject.get("Filename").asString
+            val fileName = audioDirectoryPath + "/" + audioObject.get("Filename").asString
 
-            val audioTrackPlayer = AudioTrackPlayer(fileName)
+            val audioTrackPlayer = AudioTrackPlayer(fileName, reactContext)
             audioTrackPlayer.preload()
 
             audioTrackPlayers[i] = audioTrackPlayer
@@ -185,18 +241,17 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun playOGG(path: String, promise: Promise) {
-    Log.i("ogg", "Trying to play audio file: $path")
+    val uncompressedPath = getUncompressedPath(path, reactContext)
     mediaPlayer?.release()
     mediaPlayer = MediaPlayer()
     try {
-        mediaPlayer?.setDataSource(path)
+      mediaPlayer?.setDataSource(uncompressedPath)
     } catch (e: IOException) {
         e.printStackTrace()
-        Log.i("ogg", "Failed to play audio file: $path $e")
         promise.reject("Error reading file", e)
         return
     }
-    Log.i("ogg", "Playing audio file: $path")
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         mediaPlayer?.setAudioAttributes(
             AudioAttributes.Builder().setHapticChannelsMuted(false).build()
@@ -227,7 +282,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   }
 }
 
-class AudioTrackPlayer(private val filePath: String) {
+class AudioTrackPlayer(private val filePath: String, private val reactContext: ReactApplicationContext) {
     private var audioTrack: AudioTrack? = null
     private var extractor: MediaExtractor? = null
     private var codec: MediaCodec? = null
@@ -242,9 +297,10 @@ class AudioTrackPlayer(private val filePath: String) {
      * MediaCodec and prepares the AudioTrack for playback.
      */
     fun preload() {
+        val uncompressedPath = getUncompressedPath(filePath, reactContext)
         extractor = MediaExtractor()
         try {
-            extractor?.setDataSource(filePath)
+            extractor?.setDataSource(uncompressedPath)
             var format: MediaFormat? = null
 
             // Find the first audio track in the file
@@ -331,11 +387,6 @@ class AudioTrackPlayer(private val filePath: String) {
             audioTrack = AudioTrack(
                 AudioManager.STREAM_MUSIC, sampleRate, channelConfig,
                 audioFormat, fullBuffer.size, AudioTrack.MODE_STATIC
-            )
-
-            Log.i(
-                "AudioTrackPlayer",
-                "Writing full buffer to AudioTrack, length: ${fullBuffer.size} buffer size: $bufferSize"
             )
 
             audioTrack?.write(fullBuffer, 0, fullBuffer.size)

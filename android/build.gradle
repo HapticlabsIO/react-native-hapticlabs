@@ -72,6 +72,10 @@ android {
     }
   }
 
+  aaptOptions {
+      noCompress "ogg", "hla", "wav"
+  }
+
   lintOptions {
     disable "GradleCompatible"
   }

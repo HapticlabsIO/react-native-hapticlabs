@@ -38,25 +38,21 @@ export default function App() {
         console.log('Played ahap');
       });
     } else {
-      getExampleAndroidHapticTrackDirectory()
-        .then((directory) => {
-          return playHLA(directory + '/Spring.hla')
-            .then(() => {
-              console.log('HLA played');
-              return playOGG(directory + '/Spring.ogg');
-            })
-            .then(() => {
-              console.log('OGG played');
-              console.log('Level', androidHapticSupportLevel);
-            })
-            .then(() => {
-              return playAndroidHaptics(RNFS.DocumentDirectoryPath + '/rarri');
-            })
-            .then(() => {
-              console.log('Android haptics played');
-            });
+      playHLA('ControllingHapticTrack/Spring.hla')
+        .then(() => {
+          console.log('HLA played');
+          return playOGG('ControllingHapticTrack/Spring.ogg');
         })
-
+        .then(() => {
+          console.log('OGG played');
+          console.log('Level', androidHapticSupportLevel);
+        })
+        .then(() => {
+          return playAndroidHaptics('rarri');
+        })
+        .then(() => {
+          console.log('Android haptics played');
+        })
         .catch(console.error);
     }
   });
