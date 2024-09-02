@@ -187,6 +187,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         timings[i] = timingsArray[i].asLong
     }
 
+    val durationMs = jsonObject.get("Duration").asLong
+
     val audiosArray = jsonObject.getAsJsonArray("Audios")
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -233,9 +235,11 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
             }, startTime + audioDelays[i])
         }
         handler?.postAtTime({
-            promise.resolve(null);
             vibrator.vibrate(vibrationEffect)
         }, startTime)
+        handler?.postAtTime({
+            promise.resolve(null);
+        }, startTime + durationMs)
     }
   }
 
