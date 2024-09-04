@@ -70,13 +70,13 @@ class Hapticlabs: NSObject {
         let data = try Data(contentsOf: ahapURL)
         datas.append(data)
 
-        var parentDirectoryURL = ahapURL.deletingLastPathComponent()
+        let parentDirectoryURL = ahapURL.deletingLastPathComponent()
 
         let ahap = try decoder.decode(AHAP.self, from: data)
         // Code to execute when decoding is successful
         // Extract AHAP_FILES from the description
         let description = ahap.Metadata.Description
-        var descriptionParts = description.split(separator: "\n")
+        let descriptionParts = description.split(separator: "\n")
 
         if let supportingAudioDescriptionPartIndex = descriptionParts.firstIndex(where: { $0.starts(with: "AUDIO_FILES=") }) {
             let audioFormat = "^AUDIO_FILES=\\[((?:[^,]*?)(?:,[^,]*?)*)\\]$"
@@ -98,7 +98,8 @@ class Hapticlabs: NSObject {
                         let sourceAudioURL = parentDirectoryURL.appendingPathComponent(audioFileNameString)
                         
                         // Analyze the audio file name to get the file name and extension
-                        let audioFileName = audioFileNameString.split(separator: ".").first!
+                        // The fileName is everything before the last period
+                        let audioFileName = audioFileNameString.split(separator: ".").dropLast().joined(separator: ".")
                         let audioFileExtension = audioFileNameString.split(separator: ".").last!
 
                         // The target audio file path in the documents directory
@@ -138,8 +139,8 @@ class Hapticlabs: NSObject {
     // Find filenames from the AHAP
     // Load the ahap file
 
-    var ahapURL = URL(string: "file://" + ahapPath)
-    var parentDirectoryURL = ahapURL?.deletingLastPathComponent()
+    let ahapURL = URL(string: "file://" + ahapPath)
+    let parentDirectoryURL = ahapURL?.deletingLastPathComponent()
       do {
           let data = try Data(contentsOf: URL(string: "file://" + ahapPath)!)
     // Parse the json
@@ -151,7 +152,7 @@ class Hapticlabs: NSObject {
       // Code to execute when decoding is successful
       // Extract AHAP_FILES from the description
       let description = ahap.Metadata.Description
-      var descriptionParts = description.split(separator: "\n")
+      let descriptionParts = description.split(separator: "\n")
 
       if let supportingAHAPDescriptionPartIndex = descriptionParts.firstIndex(where: { $0.starts(with: "AHAP_FILES=") }) {
           let ahapFormat = "^AHAP_FILES=\\[((?:[^,]*?)(?:,[^,]*?)*)\\]$"

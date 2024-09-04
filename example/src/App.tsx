@@ -85,7 +85,9 @@ export default function App() {
         <Button
           title="Play AHAP"
           onPress={() => {
-            playAHAP(RNFS.MainBundlePath + '/AHAP/9Bit.ahap').then(() => {
+            playAHAP(
+              RNFS.MainBundlePath + '/NewProject/NewTrack00333555.ahap'
+            ).then(() => {
               console.log('Played ahap');
             });
           }}

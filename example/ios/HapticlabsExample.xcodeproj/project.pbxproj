@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* HapticlabsExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* HapticlabsExampleTests.m */; };
-		064344A52C8223A900D1CFCD /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = 064344A42C8223A900D1CFCD /* AHAP */; };
+		06B591D22C88BA7C00D46A4E /* NewProject in Resources */ = {isa = PBXBuildFile; fileRef = 06B591D12C88BA7C00D46A4E /* NewProject */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -32,7 +32,7 @@
 		00E356EE1AD99517003FC87E /* HapticlabsExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HapticlabsExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* HapticlabsExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HapticlabsExampleTests.m; sourceTree = "<group>"; };
-		064344A42C8223A900D1CFCD /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
+		06B591D12C88BA7C00D46A4E /* NewProject */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NewProject; path = AHAP/NewProject; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* HapticlabsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HapticlabsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = HapticlabsExample/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = HapticlabsExample/AppDelegate.mm; sourceTree = "<group>"; };
@@ -123,7 +123,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				064344A42C8223A900D1CFCD /* AHAP */,
+				06B591D12C88BA7C00D46A4E /* NewProject */,
 				13B07FAE1A68108700A75B9A /* HapticlabsExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* HapticlabsExampleTests */,
@@ -249,9 +249,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06B591D22C88BA7C00D46A4E /* NewProject in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				064344A52C8223A900D1CFCD /* AHAP in Resources */,
 				4CE6274AC0E2FED9D3A752B5 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
