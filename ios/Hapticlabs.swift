@@ -14,14 +14,14 @@ class AHAPSyncPlayer {
     self.engine = engine
   }
 
-  func play(ahapURLs: [URL]) throws {
+  func play(ahapURLs: [URL], resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) throws {
     // Load all referenced AHAP files into memory to reduce latency.
     let ahapDatas = ahapURLs.map { try! Data(contentsOf: $0) }
 
-    return try self.play(ahapDatas: ahapDatas)
+    return try self.play(ahapDatas: ahapDatas, resolve: resolve, reject: reject)
   }
 
-  func play(ahapDatas: [Data]) throws {
+  func play(ahapDatas: [Data], resolve: @escaping RCTPromiseResolveBlock,  reject: @escaping RCTPromiseRejectBlock) throws {
     // Start the engine in case it's idle.
     try self.engine.start()
 
@@ -29,6 +29,16 @@ class AHAPSyncPlayer {
     for ahapData in ahapDatas {
       try self.engine.playPattern(from: ahapData)
     }
+      
+    // Use a weak reference to self to avoid retain cycles
+    self.engine.notifyWhenPlayersFinished(finishedHandler: { error in
+        if let error = error {
+            reject("Error", "Failed to play AHAPs: \(error)", nil)
+        } else {
+            resolve(nil)
+        }
+        return .leaveEngineRunning
+    })
 
     // self.engine.stop()
   }
@@ -57,7 +67,7 @@ class Hapticlabs: NSObject {
   }
 
   
-  func playAHAPs(ahapPaths: [String], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock){
+  func playAHAPs(ahapPaths: [String], resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock){
     // Create an array of URLs from the AHAP file names.
     let urls = ahapPaths.compactMap{ URL(string: "file://" + $0) }
     var datas: [Data] = []
@@ -126,16 +136,15 @@ class Hapticlabs: NSObject {
     if let goodEngine = engine {
       let player = AHAPSyncPlayer(engine: goodEngine)
       do {
-        try player.play(ahapDatas: datas)
+        try player.play(ahapDatas: datas, resolve: resolve, reject: reject)
       } catch {
         reject("Error", "Failed to play AHAPs", nil)
       }
     }
-    resolve(nil);
   }
 
   @objc(playAHAP:withResolver:withRejecter:)
-  func playAHAP(ahapPath: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock){
+  func playAHAP(ahapPath: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
     // Find filenames from the AHAP
     // Load the ahap file
 
