@@ -133,15 +133,15 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         return // Do nothing
       }
       1 -> {
-        val path = directoryPath + "/1/main.hla"
+        val path = directoryPath + "/lvl1/main.hla"
         return playHLA(path, promise)
       }
       2 -> {
-        val path = directoryPath + "/2/main.hla"
+        val path = directoryPath + "/lvl2/main.hla"
         return playHLA(path, promise)
       }
       3 -> {
-        val path = directoryPath + "/3/main.ogg"
+        val path = directoryPath + "/lvl3/main.ogg"
         return playOGG(path, promise)
       }
     }
