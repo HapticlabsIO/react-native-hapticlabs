@@ -33,22 +33,6 @@ export function playHLA(path: string): Promise<void> {
 }
 
 /**
- * This command will play an AHAP file from the specified `path`, including corresponding AHAP files and audio files.
- *
- * *Note*: This command is only supported on iOS.
- * @param path The path to the AHAP file.
- * @returns A promise that resolves when the AHAP file has been played.
- */
-export function playAHAP(path: string): Promise<void> {
-  if (Platform.OS === 'ios') {
-    console.log(Hapticlabs);
-    return Hapticlabs.playAHAP(path);
-  } else {
-    return Promise.reject(new Error('AHAP is only supported on iOS'));
-  }
-}
-
-/**
  * This command will play an OGG file from the specified `path`, including encoded haptic feedback.
  * If the device's haptic support level is less than 3, the device will play the audio file without haptic feedback.
  * To automatically select adequate haptic feedback for the device, use `playAndroidHaptics` instead.
@@ -106,3 +90,18 @@ export function playAndroidHaptics(directoryPath: string): Promise<void> {
  */
 export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =
   Hapticlabs.hapticSupportLevel ?? -1;
+
+/**
+ * This command will play an AHAP file from the specified `path`, including corresponding AHAP files and audio files.
+ *
+ * *Note*: This command is only supported on iOS.
+ * @param path The path to the AHAP file.
+ * @returns A promise that resolves when the AHAP file has been played.
+ */
+export function playAHAP(path: string): Promise<void> {
+  if (Platform.OS === 'ios') {
+    return Hapticlabs.playAHAP(path);
+  } else {
+    return Promise.reject(new Error('AHAP is only supported on iOS'));
+  }
+}
