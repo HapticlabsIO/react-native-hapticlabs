@@ -33,7 +33,9 @@ export default function App() {
           <Button
             title="Play Android Haptics"
             onPress={() => {
-              playAndroidHaptics('rarri').then(() => {
+              playAndroidHaptics(
+                'Ramp + click2-Vibration A-Subtle Repetitive Notification'
+              ).then(() => {
                 console.log('Android haptics played');
               });
             }}
@@ -41,7 +43,9 @@ export default function App() {
           <Button
             title="Play HLA"
             onPress={() => {
-              playHLA('ControllingHapticTrack/Spring.hla').then(() => {
+              playHLA(
+                'Ramp + click2-Vibration A-Subtle Repetitive Notification/lvl2/main.hla'
+              ).then(() => {
                 console.log('HLA played');
               });
             }}
@@ -49,7 +53,9 @@ export default function App() {
           <Button
             title="Play OGG"
             onPress={() => {
-              playOGG('ControllingHapticTrack/Spring.ogg').then(() => {
+              playOGG(
+                'Ramp + click2-Vibration A-Subtle Repetitive Notification/lvl3/main.ogg'
+              ).then(() => {
                 console.log('OGG played');
               });
             }}
