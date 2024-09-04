@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, View, Text, Platform } from 'react-native';
+import { StyleSheet, View, Text, Platform, Button } from 'react-native';
 import {
   androidHapticSupportLevel,
   playAHAP,
@@ -22,48 +22,52 @@ export default function App() {
           });
         });
       });
-    } else {
-      copyAssetFolder('rarri', RNFS.DocumentDirectoryPath + '/rarri');
     }
   }, []);
 
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      RNFS.exists(RNFS.DocumentDirectoryPath + '/AHAP/9Bit.ahap').then(
-        (exists) => {
-          console.log('exissssssssssssssssts', exists);
-        }
-      );
-      playAHAP(RNFS.DocumentDirectoryPath + '/AHAP/9Bit.ahap').then(() => {
-        console.log('Played ahap');
-      });
-    } else {
-      getExampleAndroidHapticTrackDirectory()
-        .then((directory) => {
-          return playHLA(directory + '/Spring.hla')
-            .then(() => {
-              console.log('HLA played');
-              return playOGG(directory + '/Spring.ogg');
-            })
-            .then(() => {
-              console.log('OGG played');
-              console.log('Level', androidHapticSupportLevel);
-            })
-            .then(() => {
-              return playAndroidHaptics(RNFS.DocumentDirectoryPath + '/rarri');
-            })
-            .then(() => {
-              console.log('Android haptics played');
-            });
-        })
-
-        .catch(console.error);
-    }
-  });
-
   return (
     <View style={styles.container}>
-      <Text>Nothing lol</Text>
+      {Platform.OS === 'android' && (
+        <>
+          <Text>Haptic support level: {androidHapticSupportLevel}</Text>
+          <Button
+            title="Play Android Haptics"
+            onPress={() => {
+              playAndroidHaptics('rarri').then(() => {
+                console.log('Android haptics played');
+              });
+            }}
+          />
+          <Button
+            title="Play HLA"
+            onPress={() => {
+              playHLA('ControllingHapticTrack/Spring.hla').then(() => {
+                console.log('HLA played');
+              });
+            }}
+          />
+          <Button
+            title="Play OGG"
+            onPress={() => {
+              playOGG('ControllingHapticTrack/Spring.ogg').then(() => {
+                console.log('OGG played');
+              });
+            }}
+          />
+        </>
+      )}
+      {Platform.OS === 'ios' && (
+        <Button
+          title="Play AHAP"
+          onPress={() => {
+            playAHAP(RNFS.DocumentDirectoryPath + '/AHAP/9Bit.ahap').then(
+              () => {
+                console.log('Played ahap');
+              }
+            );
+          }}
+        />
+      )}
     </View>
   );
 }
@@ -81,16 +85,6 @@ const styles = StyleSheet.create({
   },
 });
 
-async function getExampleAndroidHapticTrackDirectory(): Promise<string> {
-  const exampleHapticTrackDirectory =
-    RNFS.DocumentDirectoryPath + '/ExampleHapticTrack';
-
-  // Create the directory if it doesn't exist
-  await RNFS.mkdir(exampleHapticTrackDirectory);
-
-  return exampleHapticTrackDirectory;
-}
-
 async function getFilesThatNeedLoading() {
   return Platform.OS === 'ios'
     ? [
@@ -103,24 +97,7 @@ async function getFilesThatNeedLoading() {
             '/4bab56049a1248eeac8397f6c3f850e9short.wav',
         },
       ]
-    : [
-        {
-          origin: 'ControllingHapticTrack/08e9d2f44da2463aba8f7ba62187135e.wav',
-          target:
-            (await getExampleAndroidHapticTrackDirectory()) +
-            '/08e9d2f44da2463aba8f7ba62187135e.wav',
-        },
-        {
-          origin: 'ControllingHapticTrack/Spring.hla',
-          target:
-            (await getExampleAndroidHapticTrackDirectory()) + '/Spring.hla',
-        },
-        {
-          origin: 'ControllingHapticTrack/Spring.ogg',
-          target:
-            (await getExampleAndroidHapticTrackDirectory()) + '/Spring.ogg',
-        },
-      ];
+    : [];
 }
 
 const copyFolder = async (source: string, target: string) => {
@@ -147,31 +124,5 @@ const copyFolder = async (source: string, target: string) => {
     }
   } catch (error) {
     console.error('Error copying folder:', error);
-  }
-};
-
-const copyAssetFolder = async (source: string, target: string) => {
-  try {
-    // Create the target directory if it doesn't exist
-    await RNFS.mkdir(target);
-
-    // Get the list of files and directories in the source directory
-    const items = await RNFS.readDirAssets(source);
-
-    // Iterate through each item
-    for (const item of items) {
-      const sourcePath = item.path;
-      const targetPath = `${target}/${item.name}`;
-
-      if (item.isFile() && !(await RNFS.exists(targetPath))) {
-        // Copy the file to the target directory
-        await RNFS.copyFileAssets(sourcePath, targetPath);
-      } else if (item.isDirectory()) {
-        // Recursively copy the directory
-        await copyAssetFolder(sourcePath, targetPath);
-      }
-    }
-  } catch (error) {
-    console.error('Error copying asset folder:', error);
   }
 };
