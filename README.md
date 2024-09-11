@@ -1,6 +1,6 @@
 # react-native-hapticlabs
 
-A package to play back haptics developed using Hapticlabs Studio.
+A package to play back haptics developed using Hapticlabs Studio. See [Hapticlabs](https://hapticlabs.io/) for more information.
 
 ## Installation
 

@@ -85,8 +85,29 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
     private val hapticSupportLevel = determineHapticSupportLevel()
 
-    private var mediaPlayer: MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer
     private var handler: Handler? = null
+
+    init {
+      mediaPlayer = MediaPlayer()
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          mediaPlayer.setAudioAttributes(
+              AudioAttributes.Builder().setHapticChannelsMuted(false).build()
+          )
+      }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+          val isAvailable = HapticGenerator.isAvailable()
+          if (isAvailable) {
+              val generator = HapticGenerator.create(mediaPlayer.audioSessionId ?: 0)
+              generator.setEnabled(false)
+          }
+      }
+    }
+
+    protected fun finalize() {
+        mediaPlayer.release()
+    }
 
     private fun determineHapticSupportLevel(): Int {
         var level = 0
@@ -246,37 +267,23 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   @ReactMethod
   fun playOGG(path: String, promise: Promise) {
     val uncompressedPath = getUncompressedPath(path, reactContext)
-    mediaPlayer?.release()
+    mediaPlayer.release()
     mediaPlayer = MediaPlayer()
     try {
-      mediaPlayer?.setDataSource(uncompressedPath)
+      mediaPlayer.setDataSource(uncompressedPath)
     } catch (e: IOException) {
         e.printStackTrace()
         promise.reject("Error reading file", e)
         return
     }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        mediaPlayer?.setAudioAttributes(
-            AudioAttributes.Builder().setHapticChannelsMuted(false).build()
-        )
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val isAvailable = HapticGenerator.isAvailable()
-        if (isAvailable) {
-            val generator = HapticGenerator.create(mediaPlayer?.audioSessionId ?: 0)
-            generator.setEnabled(false)
-        }
-    }
     try {
-        mediaPlayer?.prepare()
+        mediaPlayer.prepare()
     } catch (e: IOException) {
         e.printStackTrace()
     }
-    mediaPlayer?.start()
-    mediaPlayer?.setOnCompletionListener { mp ->
+    mediaPlayer.start()
+    mediaPlayer.setOnCompletionListener { mp ->
         // Playback completed, release resources
-        mp.release()
         promise.resolve(null)
     }
   }
@@ -293,7 +300,6 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
     private var inputBuffers: Array<ByteBuffer>? = null
     private var outputBuffers: Array<ByteBuffer>? = null
     private var info: MediaCodec.BufferInfo? = null
-    private val handler: Handler = Handler()
     private var isEOS = false
 
     /**
