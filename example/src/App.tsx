@@ -3,6 +3,7 @@ import {
   androidHapticSupportLevel,
   playAHAP,
   playAndroidHaptics,
+  playHaptics,
   playHLA,
   playOGG,
 } from 'react-native-hapticlabs';
@@ -11,6 +12,26 @@ import RNFS from 'react-native-fs';
 export default function App() {
   return (
     <View style={styles.container}>
+      <Button
+        title="Play haptics (cross-platform)"
+        onPress={() => {
+          /**
+           * This command will play the haptic pattern specified by the `iosPath` on iOS
+           * and the `androidPath` on Android.
+           * On iOS devices, this will internally call `playAHAP(iosPath)`.
+           * On Android devices, this will internally call `playAndroidHaptics(androidPath)`
+           * and automatically select the appropriate haptic signal based on the device's
+           * haptic capability level (see `playAndroidHaptics()`).
+           * If the device does not support haptics, no haptic feedback will be played.
+           */
+          playHaptics({
+            iosPath: 'iOSSamples/button.ahap',
+            androidPath: 'Android samples/button',
+          }).then(() => {
+            console.log('Haptics played');
+          });
+        }}
+      />
       {Platform.OS === 'android' && (
         <>
           <Text>
@@ -40,9 +61,7 @@ export default function App() {
                * For haptic support level 1, "Single Vibration" will be played.
                * For haptic support level 0, no haptic feedback will be played.
                */
-              playAndroidHaptics(
-                'Android samples/Double click with audio-Simple pattern-Single Vibration'
-              ).then(() => {
+              playAndroidHaptics('Android samples/purringCat').then(() => {
                 console.log('Android haptics played');
               });
             }}
@@ -56,9 +75,7 @@ export default function App() {
                * Note that this .hla file references an audio file, which will be played
                * along with the haptic feedback.
                */
-              playHLA(
-                'Android samples/Double click with audio/lvl2/main.hla'
-              ).then(() => {
+              playHLA('Android samples/8bit/lvl2/main.hla').then(() => {
                 console.log('HLA played');
               });
             }}
@@ -72,11 +89,9 @@ export default function App() {
                * Note that .ogg playback requires the device to support haptics level 3:
                * If the device's haptic support is less than 3, no haptic feedback will be played.
                */
-              playOGG('Android samples/Simple pattern/lvl3/main.ogg').then(
-                () => {
-                  console.log('OGG played');
-                }
-              );
+              playOGG('Android samples/8bit/lvl3/main.ogg').then(() => {
+                console.log('OGG played');
+              });
             }}
           />
         </>

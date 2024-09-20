@@ -105,3 +105,27 @@ export function playAHAP(path: string): Promise<void> {
     return Promise.reject(new Error('AHAP is only supported on iOS'));
   }
 }
+
+/**
+ * This command will play the haptic pattern specified by the `iosPath` on iOS and the `androidPath` on Android.
+ * @param iosPath The path to the AHAP file.
+ * @param androidPath The path to the Android haptic pattern directory. This can be a path relative to the assets directory or a fully qualified path.
+ * @returns A promise that resolves when the haptic pattern has finished playing.
+ */
+export function playHaptics({
+  iosPath,
+  androidPath,
+}: {
+  iosPath: string;
+  androidPath: string;
+}): Promise<void> {
+  if (Platform.OS === 'ios') {
+    return Hapticlabs.playAHAP(iosPath);
+  } else if (Platform.OS === 'android') {
+    return Hapticlabs.playAndroidHaptics(androidPath);
+  } else {
+    return Promise.reject(
+      new Error('Haptics are only supported on iOS and Android')
+    );
+  }
+}
