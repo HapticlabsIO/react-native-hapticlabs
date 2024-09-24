@@ -47,7 +47,13 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "haptics",
+    "vibration",
+    "ahap",
+    "hla",
+    "ogg",
+    "hapticlabs"
   ],
   "repository": {
     "type": "git",
