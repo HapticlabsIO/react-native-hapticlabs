@@ -1,6 +1,6 @@
 {
   "name": "react-native-hapticlabs",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A package to play back haptics developed using Hapticlabs Studio",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
