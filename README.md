@@ -13,12 +13,7 @@ npm install react-native-hapticlabs
 Play haptics on Android:
 
 ```typescript
-import {
-  playAndroidHaptics,
-  playHLA,
-  playOGG,
-} from 'react-native-hapticlabs';
-
+import { playAndroidHaptics, playHLA, playOGG } from 'react-native-hapticlabs';
 
 // Automatically selects the haptic feedback based on the device's haptic support level
 playAndroidHaptics(
@@ -28,18 +23,14 @@ playAndroidHaptics(
 });
 
 // Plays back the HLA file and associated audio files
-playHLA(
-  'Android samples/Double click with audio/lvl2/main.hla'
-).then(() => {
+playHLA('Android samples/Double click with audio/lvl2/main.hla').then(() => {
   console.log('HLA played');
 });
 
 // Plays back the OGG file with haptic feedback if the device supports it
-playOGG('Android samples/Simple pattern/lvl3/main.ogg').then(
-  () => {
-    console.log('OGG played');
-  }
-);
+playOGG('Android samples/Simple pattern/lvl3/main.ogg').then(() => {
+  console.log('OGG played');
+});
 ```
 
 Play haptics on iOS:
@@ -55,11 +46,24 @@ import {
 import RNFS from 'react-native-fs';
 
 // Plays back the AHAP files and associated other AHAP and audio files
-playAHAP(RNFS.MainBundlePath + '/AHAP/9Bit.ahap').then(
-  () => {
-    console.log('Played ahap');
-  }
-);
+playAHAP(RNFS.MainBundlePath + '/AHAP/9Bit.ahap').then(() => {
+  console.log('Played ahap');
+});
+```
+
+Play haptics on both Android and iOS:
+
+```typescript
+import { playHaptics } from 'react-native-hapticlabs';
+import RNFS from 'react-native-fs';
+
+// Plays back an AHAP file on iOS and an HLA or OGG file on Android
+playHaptics({
+  iosPath: RNFS.MainBundlePath + '/AHAP/button.ahap',
+  androidPath: 'Android samples/button',
+}).then(() => {
+  console.log('Played haptics');
+});
 ```
 
 ## Functions
@@ -152,7 +156,6 @@ This value is a number between 0 and 3, where:
 
 _Note_: This value is only supported on Android.
 
-
 ### playAHAP
 
 ```typescript
@@ -170,6 +173,24 @@ Parameters:
 Returns:
 
 A promise that resolves when the AHAP file has been played.
+
+### playHaptics
+
+```typescript
+function playHaptics(options: {
+  iosPath: string;
+  androidPath: string;
+}): Promise<void>;
+```
+
+This command will play an AHAP file on iOS and an HLA or OGG file on Android. Internally, it will call `playAHAP` on iOS and `playAndroidHaptics` on Android.
+
+Parameters:
+
+- `options` An object containing the paths to the AHAP file on iOS and the HLA or OGG file on Android:
+
+  - `iosPath` The path to the AHAP file for iOS. See `playAHAP` for more information.
+  - `androidPath` The path to the haptic pattern directory for Android. See `playAndroidHaptics` for more information.
 
 ## Contributing
 

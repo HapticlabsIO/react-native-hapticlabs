@@ -20,6 +20,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.file.Paths
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import android.media.*
@@ -37,10 +38,11 @@ private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Bo
 }
 
 private fun getUncompressedPath(path: String, reactContext: ReactApplicationContext): String {
-  if (isAssetPath(path, reactContext)) {
-    return getUncompressedAssetPath(path, reactContext)
+  val normalizedPath = Paths.get(path).normalize().toString()
+  if (isAssetPath(normalizedPath, reactContext)) {
+    return getUncompressedAssetPath(normalizedPath, reactContext)
   } else {
-    return path
+    return normalizedPath
   }
 }
 
