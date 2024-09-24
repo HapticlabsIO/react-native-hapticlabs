@@ -54,7 +54,7 @@ private fun getUncompressedAssetPath(assetName: String, reactContext: ReactAppli
 
     val outFile = File(uncompressedDir, assetName)
     val outDir = outFile.parentFile
-    if (!outDir.exists()) {
+    if (outDir != null && !outDir.exists()) {
         outDir.mkdirs()
     }
 
@@ -101,7 +101,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
           val isAvailable = HapticGenerator.isAvailable()
           if (isAvailable) {
-              val generator = HapticGenerator.create(mediaPlayer.audioSessionId ?: 0)
+              val generator = HapticGenerator.create(mediaPlayer.getAudioSessionId())
               generator.setEnabled(false)
           }
       }
@@ -112,24 +112,22 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     }
 
     private fun determineHapticSupportLevel(): Int {
-        var level = 0
+        var level: Int
         val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         val vibrator = vibratorManager.getDefaultVibrator();
-        if (vibrator != null) {
-            if (vibrator.hasVibrator()) {
-                level = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (vibrator.hasAmplitudeControl()) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && HapticGenerator.isAvailable()) {
-                            3
-                        } else {
-                            2
-                        }
+        if (vibrator.hasVibrator()) {
+            level = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (vibrator.hasAmplitudeControl()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && HapticGenerator.isAvailable()) {
+                        3
                     } else {
-                        1
+                        2
                     }
                 } else {
                     1
                 }
+            } else {
+                1
             }
         } else {
             // Vibrator service not available
@@ -224,7 +222,6 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         val audioDelays = IntArray(audiosArray.size())
 
         // Get the directory of the hla file
-        val assetManager: AssetManager = reactContext.assets
         val audioDirectoryPath = path.substringBeforeLast('/')
 
         // Prepare the audio files
@@ -284,8 +281,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         e.printStackTrace()
     }
     mediaPlayer.start()
-    mediaPlayer.setOnCompletionListener { mp ->
-        // Playback completed, release resources
+    mediaPlayer.setOnCompletionListener { _ ->
+        // Playback completed
         promise.resolve(null)
     }
   }
@@ -333,8 +330,6 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
 
             codec?.start()
 
-            inputBuffers = codec?.inputBuffers
-            outputBuffers = codec?.outputBuffers
             info = MediaCodec.BufferInfo()
 
             // Set up AudioTrack
@@ -343,9 +338,6 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
             val channelConfig = if (channelCount == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO
             val audioFormat = AudioFormat.ENCODING_PCM_16BIT
 
-            val minBufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat)
-            val bufferSize = Math.max(minBufferSize, info!!.size)
-
             // Load the entire audio file into the AudioTrack
             val byteArrayOutputStream = ByteArrayOutputStream()
 
@@ -353,36 +345,39 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
                 if (!isEOS) {
                     val inIndex = codec!!.dequeueInputBuffer(10000)
                     if (inIndex >= 0) {
-                        val buffer = inputBuffers!![inIndex]
-                        val sampleSize = extractor!!.readSampleData(buffer, 0)
-                        if (sampleSize < 0) {
-                            codec!!.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
-                            isEOS = true
-                        } else {
-                            codec!!.queueInputBuffer(inIndex, 0, sampleSize, extractor!!.sampleTime, 0)
-                            extractor!!.advance()
+                        val buffer = codec!!.getInputBuffer(inIndex)
+                        if (buffer != null) {
+                          val sampleSize = extractor!!.readSampleData(buffer, 0)
+                          if (sampleSize < 0) {
+                              codec!!.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                              isEOS = true
+                          } else {
+                              codec!!.queueInputBuffer(inIndex, 0, sampleSize, extractor!!.sampleTime, 0)
+                              extractor!!.advance()
+                          }
                         }
                     }
                 }
 
                 val outIndex = codec!!.dequeueOutputBuffer(info!!, 10000)
                 when (outIndex) {
-                    MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED -> outputBuffers = codec!!.outputBuffers
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
                     }
                     MediaCodec.INFO_TRY_AGAIN_LATER -> {}
                     else -> {
-                        val outBuffer = outputBuffers!![outIndex]
+                        val outBuffer = codec!!.getOutputBuffer(outIndex)
                         val chunk = ByteArray(info!!.size)
-                        outBuffer.get(chunk)
-                        outBuffer.clear()
-                        // Copy the chunk into the full buffer
-                        try {
-                            byteArrayOutputStream.write(chunk)
-                        } catch (e: IOException) {
-                            e.printStackTrace()
+                        if (outBuffer != null){
+                          outBuffer.get(chunk)
+                          outBuffer.clear()
+                          // Copy the chunk into the full buffer
+                          try {
+                              byteArrayOutputStream.write(chunk)
+                          } catch (e: IOException) {
+                              e.printStackTrace()
+                          }
+                          codec!!.releaseOutputBuffer(outIndex, false)
                         }
-                        codec!!.releaseOutputBuffer(outIndex, false)
                     }
                 }
 
@@ -396,10 +391,23 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
 
             val fullBuffer = byteArrayOutputStream.toByteArray()
 
-            audioTrack = AudioTrack(
-                AudioManager.STREAM_MUSIC, sampleRate, channelConfig,
-                audioFormat, fullBuffer.size, AudioTrack.MODE_STATIC
-            )
+            audioTrack = AudioTrack.Builder()
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                )
+                .setAudioFormat(
+                    AudioFormat.Builder()
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(channelConfig)
+                        .setEncoding(audioFormat)
+                        .build()
+                )
+                .setBufferSizeInBytes(fullBuffer.size)
+                .setTransferMode(AudioTrack.MODE_STATIC)
+                .build()
 
             audioTrack?.write(fullBuffer, 0, fullBuffer.size)
 
