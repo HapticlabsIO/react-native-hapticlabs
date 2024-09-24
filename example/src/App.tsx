@@ -25,7 +25,7 @@ export default function App() {
            * If the device does not support haptics, no haptic feedback will be played.
            */
           playHaptics({
-            iosPath: 'iOSSamples/button.ahap',
+            iosPath: RNFS.MainBundlePath + '/AHAP/Button.ahap',
             androidPath: 'Android samples/button',
           }).then(() => {
             console.log('Haptics played');
@@ -100,9 +100,7 @@ export default function App() {
         <Button
           title="Play AHAP"
           onPress={() => {
-            playAHAP(
-              RNFS.MainBundlePath + '/NewProject/NewTrack00333555.ahap'
-            ).then(() => {
+            playAHAP(RNFS.MainBundlePath + '/AHAP/CatPurring.ahap').then(() => {
               console.log('Played ahap');
             });
           }}
