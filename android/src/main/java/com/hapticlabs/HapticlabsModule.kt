@@ -199,7 +199,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     val amplitudesArray = jsonObject.getAsJsonArray("Amplitudes")
     val amplitudes = IntArray(amplitudesArray.size())
     for (i in 0 until amplitudesArray.size()) {
-        amplitudes[i] = amplitudesArray[i].asInt
+        amplitudes[i] = abs(amplitudesArray[i].asInt)
     }
 
     // Extracting Repeat value
