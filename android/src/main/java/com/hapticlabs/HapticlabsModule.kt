@@ -27,6 +27,7 @@ import android.media.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import android.media.audiofx.HapticGenerator
+import kotlin.math.abs
 
 private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Boolean {
     return try {
@@ -199,7 +200,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     val amplitudesArray = jsonObject.getAsJsonArray("Amplitudes")
     val amplitudes = IntArray(amplitudesArray.size())
     for (i in 0 until amplitudesArray.size()) {
-        amplitudes[i] = amplitudesArray[i].asInt
+        amplitudes[i] = abs(amplitudesArray[i].asInt)
     }
 
     // Extracting Repeat value
