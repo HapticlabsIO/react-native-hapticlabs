@@ -27,6 +27,7 @@ import android.media.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import android.media.audiofx.HapticGenerator
+import kotlin.math.abs
 
 private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Boolean {
     return try {
