@@ -1,33 +1,31 @@
 package com.hapticlabs
 
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
 import android.content.Context
+import android.media.*
+import android.media.audiofx.HapticGenerator
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.os.VibratorManager
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.content.res.AssetManager
+import android.os.VibratorManager
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import java.io.File
-import java.io.FileOutputStream
-import java.io.FileInputStream
-import java.io.InputStream
-import java.nio.file.Paths
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import android.media.*
 import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-import android.media.audiofx.HapticGenerator
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.nio.charset.StandardCharsets
+import java.nio.file.Paths
 import kotlin.math.abs
+
 
 private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Boolean {
     return try {
@@ -38,12 +36,27 @@ private fun isAssetPath(path: String, reactContext: ReactApplicationContext): Bo
     }
 }
 
-private fun getUncompressedPath(path: String, reactContext: ReactApplicationContext): String {
-  val normalizedPath = Paths.get(path).normalize().toString()
-  if (isAssetPath(normalizedPath, reactContext)) {
-    return getUncompressedAssetPath(normalizedPath, reactContext)
+private fun getVibrator(reactContext: ReactApplicationContext): Vibrator {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+    vibratorManager.defaultVibrator
   } else {
-    return normalizedPath
+    reactContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+  }
+}
+
+private fun getUncompressedPath(path: String, reactContext: ReactApplicationContext): String {
+  // Try to normalize the path
+  val normalizedPath =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      Paths.get(path).normalize().toString()
+    } else {
+      path
+    }
+  return if (isAssetPath(normalizedPath, reactContext)) {
+    getUncompressedAssetPath(normalizedPath, reactContext)
+  } else {
+    normalizedPath
   }
 }
 
@@ -102,7 +115,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
           val isAvailable = HapticGenerator.isAvailable()
           if (isAvailable) {
-              val generator = HapticGenerator.create(mediaPlayer.getAudioSessionId())
+              val generator = HapticGenerator.create(mediaPlayer.audioSessionId)
               generator.setEnabled(false)
           }
       }
@@ -113,23 +126,13 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     }
 
     private fun determineHapticSupportLevel(): Int {
-        var level: Int
-        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)
-        if (vibratorManager == null) {
-            // Vibrator service not available
-            return 0
-        }
-        val vibrator = (vibratorManager as VibratorManager).getDefaultVibrator();
-        level = if (vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (vibrator.hasAmplitudeControl()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && HapticGenerator.isAvailable()) {
-                        3
-                    } else {
-                        2
-                    }
+        val vibrator = getVibrator(reactContext)
+        val level = if (vibrator.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && AudioManager.isHapticPlaybackSupported()) {
+                    3
                 } else {
-                    1
+                    2
                 }
             } else {
                 1
@@ -159,15 +162,15 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
         return // Do nothing
       }
       1 -> {
-        val path = directoryPath + "/lvl1/main.hla"
+        val path = "$directoryPath/lvl1/main.hla"
         return playHLA(path, promise)
       }
       2 -> {
-        val path = directoryPath + "/lvl2/main.hla"
+        val path = "$directoryPath/lvl2/main.hla"
         return playHLA(path, promise)
       }
       3 -> {
-        val path = directoryPath + "/lvl3/main.ogg"
+        val path = "$directoryPath/lvl3/main.ogg"
         return playOGG(path, promise)
       }
     }
@@ -177,7 +180,8 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   fun playHLA(path: String, promise: Promise)  {
     val data: String
 
-    val uncompressedPath = getUncompressedPath(path, reactContext)
+    val uncompressedPath =
+      getUncompressedPath(path, reactContext)
 
     try {
       val file = File(uncompressedPath)
@@ -220,8 +224,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Prepare the vibration
         val vibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, repeat)
-        val vibratorManager = reactContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        val vibrator = vibratorManager.getDefaultVibrator()
+        val vibrator = getVibrator(reactContext)
 
         val audioTrackPlayers = Array(audiosArray.size()) { AudioTrackPlayer("", reactContext) }
         val audioDelays = IntArray(audiosArray.size())
@@ -263,7 +266,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
             vibrator.vibrate(vibrationEffect)
         }, startTime)
         handler?.postAtTime({
-            promise.resolve(null);
+            promise.resolve(null)
         }, startTime + durationMs)
     }
   }
@@ -292,6 +295,24 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     }
   }
 
+
+  @ReactMethod
+  fun playPredefinedAndroidVibration(name: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      val effect = when (name) {
+        "Click" -> VibrationEffect.EFFECT_CLICK
+        "Double Click" -> VibrationEffect.EFFECT_DOUBLE_CLICK
+        "Heavy Click" -> VibrationEffect.EFFECT_HEAVY_CLICK
+        "Tick" -> VibrationEffect.EFFECT_TICK
+        else -> null
+      }
+
+      effect?.let {
+        getVibrator(reactContext).vibrate(VibrationEffect.createPredefined(it))
+      }
+    }
+  }
+
   companion object {
     const val NAME = "Hapticlabs"
   }
@@ -301,8 +322,6 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
     private var audioTrack: AudioTrack? = null
     private var extractor: MediaExtractor? = null
     private var codec: MediaCodec? = null
-    private var inputBuffers: Array<ByteBuffer>? = null
-    private var outputBuffers: Array<ByteBuffer>? = null
     private var info: MediaCodec.BufferInfo? = null
     private var isEOS = false
 
@@ -347,25 +366,23 @@ class AudioTrackPlayer(private val filePath: String, private val reactContext: R
             val byteArrayOutputStream = ByteArrayOutputStream()
 
             while (!isEOS) {
-                if (!isEOS) {
-                    val inIndex = codec!!.dequeueInputBuffer(10000)
-                    if (inIndex >= 0) {
-                        val buffer = codec!!.getInputBuffer(inIndex)
-                        if (buffer != null) {
-                          val sampleSize = extractor!!.readSampleData(buffer, 0)
-                          if (sampleSize < 0) {
-                              codec!!.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
-                              isEOS = true
-                          } else {
-                              codec!!.queueInputBuffer(inIndex, 0, sampleSize, extractor!!.sampleTime, 0)
-                              extractor!!.advance()
-                          }
-                        }
+                val inIndex = codec!!.dequeueInputBuffer(10000)
+                if (inIndex >= 0) {
+                    val buffer = codec!!.getInputBuffer(inIndex)
+                    if (buffer != null) {
+                      val sampleSize = extractor!!.readSampleData(buffer, 0)
+                      if (sampleSize < 0) {
+                          codec!!.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                          isEOS = true
+                      } else {
+                          codec!!.queueInputBuffer(inIndex, 0, sampleSize, extractor!!.sampleTime, 0)
+                          extractor!!.advance()
+                      }
                     }
                 }
 
-                val outIndex = codec!!.dequeueOutputBuffer(info!!, 10000)
-                when (outIndex) {
+
+              when (val outIndex = codec!!.dequeueOutputBuffer(info!!, 10000)) {
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
                     }
                     MediaCodec.INFO_TRY_AGAIN_LATER -> {}
