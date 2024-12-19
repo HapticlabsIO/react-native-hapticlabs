@@ -129,3 +129,24 @@ export function playHaptics({
     );
   }
 }
+
+export enum PredefinedHaptics {
+  ANDROID_CLICK = 'Click',
+  ANDROID_DOUBLE_CLICK = 'Double Click',
+  ANDROID_HEAVY_CLICK = 'Heavy Click',
+  ANDROID_TICK = 'Tick',
+}
+
+/**
+ * This command will play a predefined (built-in) haptic signal.
+ * @param signal The predefined haptic signal to play.
+ */
+export function playPredefinedHaptics(signal: PredefinedHaptics): void {
+  if (Platform.OS === 'android') {
+    Hapticlabs.playPredefinedAndroidVibration(signal);
+  } else {
+    throw new Error(
+      'Predefined haptics are only supported on Android (for now)'
+    );
+  }
+}
