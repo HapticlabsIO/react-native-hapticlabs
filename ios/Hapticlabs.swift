@@ -18,18 +18,33 @@ class AHAPSyncPlayer {
     // Load all referenced AHAP files into memory to reduce latency.
     let ahapDatas = ahapURLs.map { try! Data(contentsOf: $0) }
 
-    return try self.play(ahapDatas: ahapDatas, resolve: resolve, reject: reject)
+    return try self.play(ahapDatas: ahapDatas, resolve: resolve, reject: reject, isRetry: false)
   }
 
-  func play(ahapDatas: [Data], resolve: @escaping RCTPromiseResolveBlock,  reject: @escaping RCTPromiseRejectBlock) throws {
+  func play(ahapDatas: [Data], resolve: @escaping RCTPromiseResolveBlock,  reject: @escaping RCTPromiseRejectBlock, isRetry: Bool) throws {
     // Start the engine in case it's idle.
     try self.engine.start()
 
     // Play all patterns.
     for ahapData in ahapDatas {
-      try self.engine.playPattern(from: ahapData)
+      do {
+          try self.engine.playPattern(from: ahapData)
+      } catch {
+          // Failed to play the AHAP pattern.
+
+          // Stop
+          self.engine.stop()
+
+          // Try again
+          if !isRetry {
+            return try self.play(ahapDatas: ahapDatas, resolve: resolve, reject: reject, isRetry: true)
+          } else {
+            reject("Error", "Failed to play AHAPs: \(error)", nil)
+            return
+          }
+      }
     }
-      
+
     // Use a weak reference to self to avoid retain cycles
     self.engine.notifyWhenPlayersFinished(finishedHandler: { error in
         if let error = error {
@@ -39,8 +54,6 @@ class AHAPSyncPlayer {
         }
         return .leaveEngineRunning
     })
-
-    // self.engine.stop()
   }
 }
 
@@ -136,7 +149,7 @@ class Hapticlabs: NSObject {
     if let goodEngine = engine {
       let player = AHAPSyncPlayer(engine: goodEngine)
       do {
-        try player.play(ahapDatas: datas, resolve: resolve, reject: reject)
+          try player.play(ahapDatas: datas, resolve: resolve, reject: reject, isRetry: false)
       } catch {
         reject("Error", "Failed to play AHAPs", nil)
       }
