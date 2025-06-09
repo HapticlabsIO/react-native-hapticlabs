@@ -33,7 +33,46 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
   override fun getConstants(): Map<String, Any> {
     val constants = HashMap<String, Any>()
-    constants["hapticSupportLevel"] = hapticlabsPlayer.hapticSupportLevel
+    constants["hapticSupportLevel"] = hapticlabsPlayer.hapticsCapabilities.hapticSupportLevel
+    constants["areOnOffHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsOnOff
+    constants["areAmplitudeControlHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsAmplitudeControl
+    constants["areAudioCoupledHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsAudioCoupled
+    constants["areEnvelopeHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsEnvelopeEffects
+
+    if (!hapticlabsPlayer.hapticsCapabilities.resonantFrequency.isNaN()) {
+      constants["resonanceFrequency"] = hapticlabsPlayer.hapticsCapabilities.resonantFrequency
+    }
+    if (!hapticlabsPlayer.hapticsCapabilities.qFactor.isNaN()) {
+      constants["qFactor"] = hapticlabsPlayer.hapticsCapabilities.qFactor
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+      hapticlabsPlayer.hapticsCapabilities.frequencyResponse?.let {
+        constants["minFrequency"] = it.minFrequencyHz
+        constants["maxFrequency"] = it.maxFrequencyHz
+        constants["maxAcceleration"] = it.maxOutputAccelerationGs
+
+        // Serialize the frequency response
+        val frequencyResponseMap = it.frequenciesOutputAcceleration
+        val frequencyResponseKeys = Array(frequencyResponseMap.size()){
+            index -> frequencyResponseMap.keyAt(index)
+        }
+        val frequencyResponseValues = Array<Float>(frequencyResponseMap.size()) {
+            index -> frequencyResponseMap.valueAt(index)
+        }
+
+        constants["frequencyResponseKeys"] = frequencyResponseKeys
+        constants["frequencyResponseValues"] = frequencyResponseValues
+      }
+
+      hapticlabsPlayer.hapticsCapabilities.envelopeEffectInfo?.let {
+        constants["envelopeControlPointMinDurationMillis"] = it.minControlPointDurationMillis
+        constants["envelopeControlPointMaxDuration  Millis"] = it.maxControlPointDurationMillis
+        constants["envelopeMaxDuration"] = it.maxDurationMillis
+        constants["envelopeMaxControlPoints"] = it.maxSize
+      }
+    }
+
     return constants
   }
 

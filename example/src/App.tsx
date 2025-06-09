@@ -1,15 +1,65 @@
 import { StyleSheet, View, Text, Platform, Button } from 'react-native';
 import {
   androidHapticSupportLevel,
+  areAmplitudeControlHapticsSupported,
+  areAudioCoupledHapticsSupported,
+  areEnvelopeHapticsSupported,
+  areOnOffHapticsSupported,
+  envelopeControlPointMaxDurationMillis,
+  envelopeControlPointMinDurationMillis,
+  envelopeMaxControlPointCount,
+  envelopeMaxDurationMillis,
+  frequencyResponse,
+  maxAcceleration,
+  maxFrequency,
+  minFrequency,
   playAHAP,
   playAndroidHaptics,
   playHaptics,
   playHLA,
   playOGG,
+  qFactor,
+  resonanceFrequency,
 } from 'react-native-hapticlabs';
 import RNFS from 'react-native-fs';
 
 export default function App() {
+  if (Platform.OS === 'android') {
+    console.log('Android haptic support level:', androidHapticSupportLevel);
+    console.log('Supports on / off haptics:', areOnOffHapticsSupported);
+    console.log(
+      'Supports amplitude control haptics:',
+      areAmplitudeControlHapticsSupported
+    );
+    console.log(
+      'Supports audio coupled haptics:',
+      areAudioCoupledHapticsSupported
+    );
+    console.log(
+      'Supports envelope-controlled haptics:',
+      areEnvelopeHapticsSupported
+    );
+    console.log('Resonance frequency:', resonanceFrequency);
+    console.log('Q Factor:', qFactor);
+    console.log('Min frequency:', minFrequency);
+    console.log('Max frequency:', maxFrequency);
+    console.log('Max acceleration:', maxAcceleration);
+    console.log('Frequency response:', frequencyResponse);
+    console.log(
+      'Envelope control point min duration (ms):',
+      envelopeControlPointMinDurationMillis
+    );
+    console.log(
+      'Envelope control point max duration (ms):',
+      envelopeControlPointMaxDurationMillis
+    );
+    console.log('Envelope max duration (ms):', envelopeMaxDurationMillis);
+    console.log(
+      'Envelope max control point count:',
+      envelopeMaxControlPointCount
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Button

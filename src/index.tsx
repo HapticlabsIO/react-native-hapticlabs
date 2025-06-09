@@ -89,7 +89,163 @@ export function playAndroidHaptics(directoryPath: string): Promise<void> {
  * *Note*: This value is only supported on Android.
  */
 export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =
-  Hapticlabs.hapticSupportLevel ?? -1;
+  Hapticlabs.hapticSupportLevel ?? 0;
+
+/**
+ * Whether the device supports on/off haptic feedback.
+ *
+ * On/Off haptic feedback is the most basic form of haptic feedback with timing
+ * being the only controllable parameter.
+ *
+ * *Note**: This value is only supported on Android.
+ */
+export const areOnOffHapticsSupported: boolean =
+  Hapticlabs.areOnOffHapticsSupported ?? false;
+
+/**
+ * Whether the device supports amplitude control haptic feedback.
+ *
+ * Amplitude control haptic feedback allows for more nuanced haptic feedback
+ * by controlling the amplitude of the haptic signal over time.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const areAmplitudeControlHapticsSupported: boolean =
+  Hapticlabs.areAmplitudeControlHapticsSupported ?? false;
+
+/**
+ * Whether the device supports audio coupled haptic feedback.
+ *
+ * Audio coupled haptic feedback allows for full control over the haptic
+ * feedback, while at the same time offering playback synchronized with audio.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const areAudioCoupledHapticsSupported: boolean =
+  Hapticlabs.areAudioCoupledHapticsSupported ?? false;
+
+/**
+ * Whether the device supports envelope-controlled haptic feedback.
+ *
+ * Similar to amplitude control haptic feedback, envelope-controlled haptic
+ * feedback allows for controlling both the amplitude and the frequency of the
+ * haptic signal over time.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const areEnvelopeHapticsSupported: boolean =
+  Hapticlabs.areEnvelopeHapticsSupported ?? false;
+
+/**
+ * The device's haptic actuator's resonance frequency.
+ *
+ * This is the frequency at which the haptic actuator is driven for e.g. HLA
+ * level 2 files. At this frequency, the actuator will resonate and produce
+ * the strongest and most energy-efficient haptic feedback.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const resonanceFrequency: number | null =
+  Hapticlabs.resonanceFrequency ?? null;
+
+/**
+ * The device's haptic actuator's q factor.
+ *
+ * See https://en.wikipedia.org/wiki/Q_factor for more information.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const qFactor: number | null = Hapticlabs.qFactor ?? null;
+
+/**
+ * The device's haptic actuator's self-reported minimum frequency.
+ *
+ * **Note**: This value is only supported on Android.
+ *
+ * **Note**: With audio-coupled haptics (OGG files), there are no frequency
+ * limits.
+ */
+export const minFrequency: number | null = Hapticlabs.minFrequency ?? null;
+
+/**
+ * The device's haptic actuator's self-reported maximum frequency.
+ *
+ * **Note**: This value is only supported on Android.
+ *
+ * **Note**: With audio-coupled haptics (OGG files), there are no frequency
+ * limits.
+ */
+export const maxFrequency: number | null = Hapticlabs.maxFrequency ?? null;
+
+/**
+ * The device's haptic actuator's self-reported maximum acceleration (in Gs).
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const maxAcceleration: number | null =
+  Hapticlabs.maxAcceleration ?? null;
+
+// Deserialize the frequency response data from the native module
+const frequencyResponseKeys = Hapticlabs.frequencyResponseKeys;
+const frequencyResponseValues = Hapticlabs.frequencyResponseValues;
+
+let frequencyResponse: Map<number, number> | null = null;
+
+if (frequencyResponseKeys != null && frequencyResponseValues != null) {
+  if (frequencyResponseKeys.length === frequencyResponseValues.length) {
+    // Valid frequency response data
+    frequencyResponse = new Map<number, number>();
+    for (let i = 0; i < frequencyResponseKeys.length; i++) {
+      const frequency = parseFloat(frequencyResponseKeys[i]);
+      const acceleration = parseFloat(frequencyResponseValues[i]);
+      if (!isNaN(frequency) && !isNaN(acceleration)) {
+        frequencyResponse.set(frequency, acceleration);
+      }
+    }
+  }
+}
+
+/**
+ * The device's haptic actuator's self-reported frequency response.
+ *
+ * This is a map from frequency (in Hz) to acceleration (in Gs) at that
+ * frequency.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export { frequencyResponse };
+
+/**
+ * The minimum duration (in milliseconds) for an envelope control point.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const envelopeControlPointMinDurationMillis: number | null =
+  Hapticlabs.envelopeControlPointMinDurationMillis ?? null;
+
+/**
+ * The maximum duration (in milliseconds) for an envelope control point.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const envelopeControlPointMaxDurationMillis: number | null =
+  Hapticlabs.envelopeControlPointMaxDurationMillis ?? null;
+
+/**
+ * The maximum duration (in milliseconds) for an envelope effect.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const envelopeMaxDurationMillis: number | null =
+  Hapticlabs.envelopeMaxDuration ?? null;
+
+/**
+ * The maximum number of control points for an envelope effect.
+ *
+ * **Note**: This value is only supported on Android.
+ */
+export const envelopeMaxControlPointCount: number | null =
+  Hapticlabs.envelopeMaxControlPoints ?? null;
 
 /**
  * This command will play an AHAP file from the specified `path`, including corresponding AHAP files and audio files.
