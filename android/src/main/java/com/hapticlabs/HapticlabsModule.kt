@@ -86,6 +86,35 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun preloadAndroidHaptics(directoryPath: String, promise: Promise) {
+    hapticlabsPlayer.preload(directoryPath) { _, _ ->
+      promise.resolve(null)
+    }
+  }
+
+  @ReactMethod
+  fun preloadOGG(oggPath: String, promise: Promise) {
+    hapticlabsPlayer.preloadOGG(oggPath) { _, _ ->
+      promise.resolve(null)
+    }
+  }
+
+  @ReactMethod
+  fun unloadAndroidHaptics(directoryPath: String) {
+    hapticlabsPlayer.unload(directoryPath)
+  }
+
+  @ReactMethod
+  fun unloadOGG(oggPath: String) {
+    hapticlabsPlayer.unloadOGG(oggPath)
+  }
+
+  @ReactMethod
+  fun unloadAllAndroidHaptics() {
+    hapticlabsPlayer.unloadAll()
+  }
+
+  @ReactMethod
   fun playHLA(path: String, promise: Promise) {
     hapticlabsPlayer.playHLA(path) { promise.resolve(null) }
   }

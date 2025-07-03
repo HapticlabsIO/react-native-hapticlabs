@@ -18,8 +18,13 @@ import {
   playHaptics,
   playHLA,
   playOGG,
+  preloadAndroidHaptics,
+  preloadOGG,
   qFactor,
   resonanceFrequency,
+  unloadAllAndroidHaptics,
+  unloadAndroidHaptics,
+  unloadOGG,
 } from 'react-native-hapticlabs';
 import RNFS from 'react-native-fs';
 
@@ -99,6 +104,49 @@ export default function App() {
             }
           </Text>
           <Button
+            title="Preload Android Haptics"
+            onPress={() => {
+              /**
+               * This command will preload the `Android samples/purringCat` pattern.
+               *
+               * This is useful for reducing latency when playing haptic patterns. Currently,
+               * only OGG files will be preloaded and cached, and only so if their
+               * uncompressed size is less than 1 MB
+               * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
+               */
+              preloadAndroidHaptics('Android samples/purringCat');
+              console.log('Android haptics preloaded');
+            }}
+          />
+          <Button
+            title="Unload Android Haptics"
+            onPress={() => {
+              /**
+               * This command will unload the `Android samples/purringCat` pattern.
+               *
+               * This is useful for freeing up memory when the haptic patterns are no longer
+               * needed, and to clear the cache and enforce a reload if the files have
+               * changed.
+               */
+              unloadAndroidHaptics('Android samples/purringCat');
+              console.log('Android haptics unloaded');
+            }}
+          />
+          <Button
+            title="Unload all Android Haptics"
+            onPress={() => {
+              /**
+               * This command will unload all haptic patterns that have been preloaded or
+               * played.
+               *
+               * Equivalent to calling `unloadAndroidHaptics()` for all directories and OGG
+               * files that have been preloaded or played.
+               */
+              unloadAllAndroidHaptics();
+              console.log('All Android haptics unloaded');
+            }}
+          />
+          <Button
             title="Play Android Haptics"
             onPress={() => {
               /**
@@ -128,6 +176,38 @@ export default function App() {
               playHLA('Android samples/8bit/lvl2/main.hla').then(() => {
                 console.log('HLA played');
               });
+            }}
+          />
+          <Button
+            title="Preload OGG"
+            onPress={() => {
+              /**
+               * This command will preload the OGG file
+               * `Android samples/8bit/lvl3/main.ogg`.
+               *
+               * This is useful for reducing latency. Note that currently, OGG
+               * files will only be preloaded and cached if their uncompressed
+               * size is less than 1 MB
+               * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
+               */
+              preloadOGG('Android samples/8bit/lvl3/main.ogg').then(() => {
+                console.log('OGG preloaded');
+              });
+            }}
+          />
+          <Button
+            title="Unload OGG"
+            onPress={() => {
+              /**
+               * This command will unload the OGG file
+               * `Android samples/8bit/lvl3/main.ogg`.
+               *
+               * This is useful for freeing up memory when the haptic patterns
+               * are no longer needed, and to clear the cache and enforce a
+               * reload if the file has changed.
+               */
+              unloadOGG('Android samples/8bit/lvl3/main.ogg');
+              console.log('OGG unloaded');
             }}
           />
           <Button
