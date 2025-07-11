@@ -86,17 +86,13 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun preloadAndroidHaptics(directoryPath: String, promise: Promise) {
-    hapticlabsPlayer.preload(directoryPath) { _, _ ->
-      promise.resolve(null)
-    }
+  fun preloadAndroidHaptics(directoryPath: String) {
+    hapticlabsPlayer.preload(directoryPath)
   }
 
   @ReactMethod
-  fun preloadOGG(oggPath: String, promise: Promise) {
-    hapticlabsPlayer.preloadOGG(oggPath) { _, _ ->
-      promise.resolve(null)
-    }
+  fun preloadOGG(oggPath: String) {
+    hapticlabsPlayer.preloadOGG(oggPath)
   }
 
   @ReactMethod

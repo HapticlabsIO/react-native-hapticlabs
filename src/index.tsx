@@ -38,8 +38,6 @@ export async function playHLA(path: string): Promise<void> {
  * To automatically select adequate haptic feedback for the device, use `playAndroidHaptics` instead.
  *
  * *Note*: This command is only supported on Android.
- *
- * *Note*: The played haptics will be cached by the path. To clear, use `unloadOGG` with the same path.
  * @param path The path to the OGG file. This can be a path relative to the assets directory or a fully qualified path.
  * @returns A promise that resolves when the OGG file has been played.
  */
@@ -67,8 +65,6 @@ export async function playOGG(path: string): Promise<void> {
  *     └── main.ogg
  * ```
  * *Note*: This command is only supported on Android.
- *
- * *Note*: The played haptics will be cached by the directory path. To clear, use `unloadAndroidHaptics` with the same directory path.
  * @param directoryPath The path to the haptic pattern directory. This can be a path relative to the assets directory or a fully qualified path.
  * @returns A promise that resolves when the haptic pattern has been played.
  */
@@ -90,15 +86,12 @@ export async function playAndroidHaptics(directoryPath: string): Promise<void> {
  *
  * @param path The path to the haptic pattern directory to unload. The same
  * you would pass to `playOGG`.
- * @returns A promise that resolves when the haptic patterns have been
- * preloaded.
  */
-export async function preloadOGG(path: string): Promise<void> {
+export function preloadOGG(path: string): void {
   if (Platform.OS === 'android') {
-    return Hapticlabs.preloadOGG(path);
+    Hapticlabs.preloadOGG(path);
   } else {
     console.error('OGG haptics are only supported on Android');
-    return Promise.resolve();
   }
 }
 
@@ -112,17 +105,12 @@ export async function preloadOGG(path: string): Promise<void> {
  *
  * @param directoryPath The path to the haptic pattern directory. See the
  * `playAndroidHaptics` documentation for the expected directory structure.
- * @returns A promise that resolves when the haptic patterns have been
- * preloaded.
  */
-export async function preloadAndroidHaptics(
-  directoryPath: string
-): Promise<void> {
+export function preloadAndroidHaptics(directoryPath: string): void {
   if (Platform.OS === 'android') {
-    return Hapticlabs.preloadAndroidHaptics(directoryPath);
+    Hapticlabs.preloadAndroidHaptics(directoryPath);
   } else {
     console.error('Android haptics are only supported on Android');
-    return Promise.resolve();
   }
 }
 

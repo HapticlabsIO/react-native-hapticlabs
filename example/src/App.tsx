@@ -190,9 +190,7 @@ export default function App() {
                * size is less than 1 MB
                * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
                */
-              preloadOGG('Android samples/8bit/lvl3/main.ogg').then(() => {
-                console.log('OGG preloaded');
-              });
+              preloadOGG('Android samples/8bit/lvl3/main.ogg');
             }}
           />
           <Button
