@@ -116,6 +116,11 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun playHLE(path: String, promise: Promise) {
+    hapticlabsPlayer.playHLE(path) { promise.resolve(null) }
+  }
+
+  @ReactMethod
   fun playOGG(path: String, promise: Promise) {
     hapticlabsPlayer.playOGG(path) { promise.resolve(null) }
   }

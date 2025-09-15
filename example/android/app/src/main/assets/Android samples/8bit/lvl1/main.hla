@@ -1,1 +1,38 @@
-{"ProjectName":"MobileSamplesAndroid","TrackName":"8bitLvl1Lvl2","Duration":974,"Timings":[78,9,78,9,78,9,78,9,78,161,78,60,78,9,162],"Amplitudes":[255,0,255,0,255,0,255,0,255,0,255,0,255,0,255],"Repeat":-1,"RequiredAudioFiles":[],"Audios":[]}
+{
+  "ProjectName": "Android samples",
+  "TrackName": "8bit",
+  "Duration": 885,
+  "RequiredAudioFiles": [],
+  "Audios": [],
+  "Timings": [
+    74,
+    17,
+    54,
+    17,
+    54,
+    17,
+    54,
+    17,
+    54,
+    192,
+    54,
+    48,
+    233
+  ],
+  "Amplitudes": [
+    255,
+    0,
+    255,
+    0,
+    255,
+    0,
+    255,
+    0,
+    255,
+    0,
+    255,
+    0,
+    255
+  ],
+  "Repeat": -1
+}

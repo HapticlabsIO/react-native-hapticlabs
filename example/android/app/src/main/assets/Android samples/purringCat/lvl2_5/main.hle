@@ -1,0 +1,333 @@
+{
+  "ProjectName": "Android samples",
+  "TrackName": "purringCat",
+  "Duration": 699,
+  "RequiredAudioFiles": [],
+  "Audios": [],
+  "envelopes": [
+    {
+      "startOffset": 0,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.32,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.32,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 41,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.42,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.42,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 82,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.48,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.48,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 122,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.52,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.52,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 163,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.58,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.58,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 203,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.66,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.66,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 244,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.77,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.77,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 284,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.86,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.86,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 325,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 1,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 1,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 365,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.9950671073717949,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.9950671073717949,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 406,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.8,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.8,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 446,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.7,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.7,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 487,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.6,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.6,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 527,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.52,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.52,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 568,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.46,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.46,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 608,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.43,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.43,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 649,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.35,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 10,
+          "amplitude": 0.35,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    },
+    {
+      "startOffset": 689,
+      "points": [
+        {
+          "time": 1,
+          "amplitude": 0.25,
+          "frequency": 95,
+          "priority": 1
+        },
+        {
+          "time": 11,
+          "amplitude": 0.25,
+          "frequency": 95,
+          "priority": 0
+        }
+      ],
+      "initialFrequency": 95
+    }
+  ]
+}

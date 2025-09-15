@@ -33,6 +33,23 @@ export async function playHLA(path: string): Promise<void> {
 }
 
 /**
+ * This command will play an HLE file from the specified `path`, including corresponding audio files.
+ *
+ * If the device does not support envelope-controlled haptics, no haptic feedback will be played.
+ *
+ * *Note*: This command is only supported on Android.
+ * @param path The path to the HLE file. This can be a path relative to the assets directory or a fully qualified path.
+ * @returns A promise that resolves when the HLE file has been played.
+ */
+export async function playHLE(path: string): Promise<void> {
+  if (Platform.OS === 'android') {
+    return await Hapticlabs.playHLE(path);
+  } else {
+    console.error('HLE playback is only supported on Android');
+  }
+}
+
+/**
  * This command will play an OGG file from the specified `path`, including encoded haptic feedback.
  * If the device's haptic support level is less than 3, the device will play the audio file without haptic feedback.
  * To automatically select adequate haptic feedback for the device, use `playAndroidHaptics` instead.
