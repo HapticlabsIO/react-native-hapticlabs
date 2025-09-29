@@ -60,7 +60,7 @@ class AHAPSyncPlayer {
 struct AHAP: Codable {
     let Version: Int
     let Metadata: Metadata
-    
+
     struct Metadata: Codable {
         let Project: String
         let Created: String
@@ -71,15 +71,13 @@ struct AHAP: Codable {
 @objc(Hapticlabs)
 class Hapticlabs: NSObject {
   var engine: CHHapticEngine?
-  var audioPlayer: AVAudioPlayer?
-  var feedbackGenerator: UIImpactFeedbackGenerator?
 
   override init() {
     super.init()
     createEngine()
   }
 
-  
+
   func playAHAPs(ahapPaths: [String], resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock){
     // Create an array of URLs from the AHAP file names.
     let urls = ahapPaths.compactMap{ URL(string: "file://" + $0) }
@@ -105,7 +103,7 @@ class Hapticlabs: NSObject {
             let audioFormat = "^AUDIO_FILES=\\[((?:[^,]*?)(?:,[^,]*?)*)\\]$"
             let audioRegex = try! NSRegularExpression(pattern: audioFormat, options: [])
             let audioDescriptionPart = String(descriptionParts[supportingAudioDescriptionPartIndex])
-            
+
             if let match = audioRegex.firstMatch(in: audioDescriptionPart, options: [], range: NSRange(location: 0, length: audioDescriptionPart.utf16.count)) {
                 if let range = Range(match.range(at: 1), in: audioDescriptionPart) {
                     let audioFilesString = audioDescriptionPart[range]
@@ -119,7 +117,7 @@ class Hapticlabs: NSObject {
                     for audioFileNameString in arrayOfAudioFileNameStrings {
                         // The audio file is in the same directory as the AHAP file
                         let sourceAudioURL = parentDirectoryURL.appendingPathComponent(audioFileNameString)
-                        
+
                         // Analyze the audio file name to get the file name and extension
                         // The fileName is everything before the last period
                         let audioFileName = audioFileNameString.split(separator: ".").dropLast().joined(separator: ".")
@@ -180,7 +178,7 @@ class Hapticlabs: NSObject {
           let ahapFormat = "^AHAP_FILES=\\[((?:[^,]*?)(?:,[^,]*?)*)\\]$"
           let ahapRegex = try! NSRegularExpression(pattern: ahapFormat, options: [])
           let ahapDescriptionPart = String(descriptionParts[supportingAHAPDescriptionPartIndex])
-          
+
           if let match = ahapRegex.firstMatch(in: ahapDescriptionPart, options: [], range: NSRange(location: 0, length: ahapDescriptionPart.utf16.count)) {
               if let range = Range(match.range(at: 1), in: ahapDescriptionPart) {
                   let ahapFilesString = ahapDescriptionPart[range]
@@ -197,30 +195,26 @@ class Hapticlabs: NSObject {
     }
 
     playAHAPs(ahapPaths: [ahapPath] + otherPaths, resolve: resolve, reject: reject)
-          
+
       } catch {
           reject("Error", "Failed to load ahap: " + ahapPath + " because \(error)",nil)
           return
       }
   }
-  
+
   func createEngine() {
-    
+
     // Create and configure a haptic engine.
     do {
-      // Associate the haptic engine with the default audio session
-      // to ensure the correct behavior when playing audio-based haptics.
-
-      let audioSession = AVAudioSession.sharedInstance()
-      engine = try CHHapticEngine(audioSession: audioSession)
+      engine = try CHHapticEngine()
     } catch _ {
     }
-    
+
     guard let engine = engine else {
       print("Failed to create engine!")
       return
     }
-    
+
     // The stopped handler alerts you of engine stoppage due to external causes.
     engine.stoppedHandler = { reason in
       print("The engine stopped for reason: \(reason.rawValue)")
@@ -243,7 +237,7 @@ class Hapticlabs: NSObject {
         print("Unknown error")
       }
     }
-    
+
     // The reset handler provides an opportunity for your app to restart the engine in case of failure.
     engine.resetHandler = {
       // Try restarting the engine.
