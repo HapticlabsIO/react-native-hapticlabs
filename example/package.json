@@ -13,16 +13,16 @@
     "@react-native-community/cli": "latest",
     "@react-native-community/cli-tools": "latest",
     "react": "18.3.1",
-    "react-native": "0.75.4",
+    "react-native": "0.77.0",
     "react-native-fs": "^2.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-    "@react-native/babel-preset": "0.75.2",
-    "@react-native/metro-config": "^0.75.2",
-    "@react-native/typescript-config": "0.75.2",
+    "@react-native/babel-preset": "0.77.0",
+    "@react-native/metro-config": "^0.77.0",
+    "@react-native/typescript-config": "0.77.0",
     "react-native-builder-bob": "^0.30.0"
   },
   "engines": {
