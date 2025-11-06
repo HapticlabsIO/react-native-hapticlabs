@@ -293,6 +293,14 @@ export const maxAcceleration: number | null =
 const frequencyResponseKeys = Hapticlabs.frequencyResponseKeys;
 const frequencyResponseValues = Hapticlabs.frequencyResponseValues;
 
+/**
+ * The device's haptic actuator's self-reported frequency response.
+ *
+ * This is a map from frequency (in Hz) to acceleration (in Gs) at that
+ * frequency.
+ *
+ * **Note**: This value is only supported on Android.
+ */
 let frequencyResponse: Map<number, number> | null = null;
 
 if (frequencyResponseKeys != null && frequencyResponseValues != null) {
@@ -309,14 +317,6 @@ if (frequencyResponseKeys != null && frequencyResponseValues != null) {
   }
 }
 
-/**
- * The device's haptic actuator's self-reported frequency response.
- *
- * This is a map from frequency (in Hz) to acceleration (in Gs) at that
- * frequency.
- *
- * **Note**: This value is only supported on Android.
- */
 export { frequencyResponse };
 
 /**
@@ -388,23 +388,117 @@ export async function playHaptics({
   }
 }
 
-export enum PredefinedHaptics {
-  ANDROID_CLICK = 'Click',
-  ANDROID_DOUBLE_CLICK = 'Double Click',
-  ANDROID_HEAVY_CLICK = 'Heavy Click',
-  ANDROID_TICK = 'Tick',
+/**
+ * Predefined haptic signals available on Android.
+ */
+export enum AndroidPredefinedHaptics {
+  CLICK = 'Click',
+  DOUBLE_CLICK = 'Double Click',
+  HEAVY_CLICK = 'Heavy Click',
+  TICK = 'Tick',
+}
+
+/**
+ * Predefined haptic signals available on iOS.
+ */
+export enum IOSPredefinedHaptics {
+  LIGHT = 'light',
+  MEDIUM = 'medium',
+  HEAVY = 'heavy',
+  RIGID = 'rigid',
+  SOFT = 'soft',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  ERROR = 'error',
+  SELECTION = 'selection',
 }
 
 /**
  * This command will play a predefined (built-in) haptic signal.
- * @param signal The predefined haptic signal to play.
+ *
+ * For each platform, up to one predefined haptic signal can be specified.
+ * If none is specified for the current platform, no haptic feedback will be played.
+ *
+ * @param android The predefined haptic signal to play on Android.
+ * @param ios The predefined haptic signal to play on iOS.
  */
-export function playPredefinedHaptics(signal: PredefinedHaptics): void {
-  if (Platform.OS === 'android') {
-    Hapticlabs.playPredefinedAndroidVibration(signal);
+export function playPredefinedHaptics(signal: {
+  android?: AndroidPredefinedHaptics;
+  ios?: IOSPredefinedHaptics;
+}): void {
+  if (Platform.OS === 'android' && signal.android !== undefined) {
+    Hapticlabs.playPredefinedAndroidVibration(signal.android);
+  } else if (Platform.OS === 'ios' && signal.ios !== undefined) {
+    Hapticlabs.playPredefinedIOSVibration(signal.ios);
+  }
+}
+
+/**
+ * This command will mute or unmute haptic feedback from Hapticlabs.
+ *
+ * **Note**: This command is only supported on iOS.
+ *
+ * **Note**: This command will not affect predefined haptic signals played via `playPredefinedHaptics`.
+ *
+ * @param mute Whether to mute (true) or unmute (false) haptic feedback.
+ */
+export function setHapticsMute(mute: boolean): void {
+  if (Platform.OS === 'ios') {
+    Hapticlabs.setHapticsMute(mute);
   } else {
-    throw new Error(
-      'Predefined haptics are only supported on Android (for now)'
-    );
+    console.error('Haptics mute state is only supported on iOS');
+  }
+}
+
+/**
+ * This command will return whether haptic feedback from Hapticlabs is muted.
+ *
+ * **Note**: This command is only supported on iOS.
+ *
+ * **Note**: This command will not reflect the mute state of predefined haptic signals played via `playPredefinedHaptics`.
+ *
+ * @returns A promise that resolves to whether haptic feedback is muted.
+ */
+export async function isHapticsMuted(): Promise<boolean> {
+  if (Platform.OS === 'ios') {
+    return await Hapticlabs.isHapticsMuted();
+  } else {
+    console.error('Haptics mute state is only supported on iOS');
+    return false;
+  }
+}
+
+/**
+ * This command will mute or unmute audio playback from Hapticlabs.
+ *
+ * **Note**: This command is only supported on iOS.
+ *
+ * **Note**: This command exclusively affects audio playback associated with haptic patterns played via `playAHAP` or `playHaptics`.
+ *
+ * @param mute Whether to mute (true) or unmute (false) audio playback.
+ */
+export function setAudioMute(mute: boolean): void {
+  if (Platform.OS === 'ios') {
+    Hapticlabs.setAudioMute(mute);
+  } else {
+    console.error('Audio mute state is only supported on iOS');
+  }
+}
+
+/**
+ * This command will return whether audio playback from Hapticlabs is muted.
+ *
+ * **Note**: This command is only supported on iOS.
+ *
+ * **Note**: This command exclusively reflects the mute state of audio playback associated with haptic patterns played via `playAHAP` or `playHaptics`.
+ *
+ * @returns A promise that resolves to whether audio playback is muted.
+ */
+export async function isAudioMuted(): Promise<boolean> {
+  if (Platform.OS === 'ios') {
+    return await Hapticlabs.isAudioMuted();
+  } else {
+    console.error('Audio mute state is only supported on iOS');
+    return false;
   }
 }

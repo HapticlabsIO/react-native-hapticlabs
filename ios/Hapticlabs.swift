@@ -154,6 +154,28 @@ class Hapticlabs: NSObject {
     }
   }
 
+  @objc(setHapticsMute:)
+  func setHapticsMute(mute: Bool) {
+    // Mute haptics
+    engine?.isMutedForHaptics = mute
+  }
+
+  @objc(setAudioMute:)
+  func setAudioMute(mute: Bool) {
+    // Mute audio
+    engine?.isMutedForAudio = mute
+  }
+
+  @objc(isHapticsMuted:withRejecter:)
+  func isHapticsMuted(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    resolve(engine?.isMutedForHaptics)
+  }
+
+  @objc(isAudioMuted:withRejecter:)
+  func isAudioMuted(resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
+    resolve(engine?.isMutedForAudio)
+  }
+
   @objc(playAHAP:withResolver:withRejecter:)
   func playAHAP(ahapPath: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock){
     // Find filenames from the AHAP
@@ -202,6 +224,68 @@ class Hapticlabs: NSObject {
       }
   }
 
+
+  @objc(playPredefinedIOSVibration:)
+  func playPredefinedIOSVibration(_ name: String) {
+    // Log the received data
+    if(name=="light" )
+    {
+      let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+      feedbackGenerator.prepare()
+
+      feedbackGenerator.impactOccurred()
+    }
+    else if(name=="heavy" )
+    {
+      let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+      feedbackGenerator.prepare()
+
+      feedbackGenerator.impactOccurred()
+    }
+    else if(name=="medium")
+    {
+      let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+      feedbackGenerator.prepare()
+
+      feedbackGenerator.impactOccurred()
+    }
+    else if(name=="rigid" )
+    {
+      let feedbackGenerator = UIImpactFeedbackGenerator(style: .rigid)
+      feedbackGenerator.prepare()
+
+      feedbackGenerator.impactOccurred()
+    }
+    else if(name=="soft")
+    {
+      let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+      feedbackGenerator.prepare()
+
+      feedbackGenerator.impactOccurred()
+    }
+    else if(name=="error")
+    {
+      let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+      notificationFeedbackGenerator.notificationOccurred(.error)
+    }
+    else if(name=="warning")
+    {
+      let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+      notificationFeedbackGenerator.notificationOccurred(.warning)
+    }
+    else if(name=="success")
+    {
+      let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+      notificationFeedbackGenerator.notificationOccurred(.success)
+    }
+    else if(name=="selection")
+    {
+      let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+      selectionFeedbackGenerator.prepare()
+        selectionFeedbackGenerator.selectionChanged()
+    }
+  }
+
   func createEngine() {
 
     // Create and configure a haptic engine.
@@ -247,5 +331,8 @@ class Hapticlabs: NSObject {
         print("Failed to restart the engine: \(error)")
       }
     }
+
+    engine.isMutedForAudio = false
+    engine.isMutedForHaptics = false
   }
 }

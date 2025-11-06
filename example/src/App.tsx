@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Platform, Button } from 'react-native';
 import {
   androidHapticSupportLevel,
+  AndroidPredefinedHaptics,
   areAmplitudeControlHapticsSupported,
   areAudioCoupledHapticsSupported,
   areEnvelopeHapticsSupported,
@@ -10,6 +11,9 @@ import {
   envelopeMaxControlPointCount,
   envelopeMaxDurationMillis,
   frequencyResponse,
+  IOSPredefinedHaptics,
+  isAudioMuted,
+  isHapticsMuted,
   maxAcceleration,
   maxFrequency,
   minFrequency,
@@ -19,17 +23,36 @@ import {
   playHLA,
   playHLE,
   playOGG,
+  playPredefinedHaptics,
   preloadAndroidHaptics,
   preloadOGG,
   qFactor,
   resonanceFrequency,
+  setAudioMute,
+  setHapticsMute,
   unloadAllAndroidHaptics,
   unloadAndroidHaptics,
   unloadOGG,
 } from 'react-native-hapticlabs';
 import RNFS from 'react-native-fs';
+import { useEffect, useState } from 'react';
 
 export default function App() {
+  const [hapticsMuted, setHapticsMuted] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      // Check if haptics are muted on iOS
+      isHapticsMuted().then((muted) => {
+        setHapticsMuted(muted);
+      });
+      isAudioMuted().then((muted) => {
+        setAudioMuted(muted);
+      });
+    }
+  }, []);
+
   if (Platform.OS === 'android') {
     console.log('Android haptic support level:', androidHapticSupportLevel);
     console.log('Supports on / off haptics:', areOnOffHapticsSupported);
@@ -88,6 +111,64 @@ export default function App() {
           });
         }}
       />
+      {Platform.OS === 'ios' && (
+        <>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: hapticsMuted ? 'red' : 'green',
+              marginVertical: 8,
+            }}
+          >
+            Haptics muted: {hapticsMuted ? 'Yes' : 'No'}
+          </Text>
+          <Button
+            title="Toggle Haptics Mute"
+            onPress={() => {
+              /**
+               * This command will toggle the haptics mute state on iOS.
+               * If haptics are currently muted, they will be unmuted, and vice versa.
+               *
+               * This only affects haptic feedback played through this library,
+               * not system haptics or haptics played through other libraries.
+               */
+              const newMuteState = !hapticsMuted;
+              setHapticsMute(newMuteState);
+              isHapticsMuted().then((muted) => {
+                setHapticsMuted(muted);
+              });
+            }}
+          />
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: audioMuted ? 'red' : 'green',
+              marginVertical: 8,
+            }}
+          >
+            Audio muted: {audioMuted ? 'Yes' : 'No'}
+          </Text>
+          <Button
+            title="Toggle Audio Mute"
+            onPress={() => {
+              /**
+               * This command will toggle the audio mute state on iOS.
+               * If audio is currently muted, it will be unmuted, and vice versa.
+               *
+               * This only affects audio played through this library,
+               * not system audio or audio played through other libraries.
+               */
+              const newMuteState = !audioMuted;
+              setAudioMute(newMuteState);
+              isAudioMuted().then((muted) => {
+                setAudioMuted(muted);
+              });
+            }}
+          />
+        </>
+      )}
       {Platform.OS === 'android' && (
         <>
           <Text>
@@ -249,6 +330,16 @@ export default function App() {
           }}
         />
       )}
+      <Button
+        title='Predefined: "Heavy"'
+        onPress={() => {
+          playPredefinedHaptics({
+            ios: IOSPredefinedHaptics.HEAVY,
+            android: AndroidPredefinedHaptics.HEAVY_CLICK,
+          });
+          console.log('Played predefined "Heavy" haptics');
+        }}
+      />
     </View>
   );
 }
