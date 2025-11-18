@@ -1,6 +1,6 @@
 # react-native-hapticlabs
 
-A package to play back haptics developed using Hapticlabs Studio. See [Hapticlabs](https://hapticlabs.io/) for more information.
+A package to play back rich, custom haptics on both Android and iOS. We recommend using [Hapticlabs Studio](https://hapticlabs.io/mobile), our no-code haptics development tool, to design and prototype custom haptic signals.
 
 ## Installation
 
@@ -67,6 +67,8 @@ playHaptics({
 ```
 
 ## Functions
+
+For a complete overview of the available functions, please check out [the source](src/index.tsx).
 
 ### playHLA
 
