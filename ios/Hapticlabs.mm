@@ -1,4 +1,8 @@
 #import <React/RCTBridgeModule.h>
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "HapticlabsSpec.h"
+#endif
+
 
 @interface RCT_EXTERN_MODULE(Hapticlabs, NSObject)
 
@@ -17,5 +21,13 @@ RCT_EXTERN_METHOD(playPredefinedIOSVibration:(NSString *)effectName)
 {
   return NO;
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::HapticlabsSpecJSI>(params);
+}
+#endif
 
 @end
