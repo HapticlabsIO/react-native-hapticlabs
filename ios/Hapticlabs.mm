@@ -1,33 +1,94 @@
-#import <React/RCTBridgeModule.h>
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "HapticlabsSpec.h"
-#endif
+#import "Hapticlabs.h"
+#import <react_native_hapticlabs-Swift.h>
 
+@implementation Hapticlabs
 
-@interface RCT_EXTERN_MODULE(Hapticlabs, NSObject)
+RCT_EXPORT_MODULE("Hapticlabs")
 
-RCT_EXTERN_METHOD(setHapticsMute:(BOOL)mute)
-RCT_EXTERN_METHOD(isHapticsMuted:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(setAudioMute:(BOOL)mute)
-RCT_EXTERN_METHOD(isAudioMuted:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(playAHAP:(NSString *)ahapPath
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(playPredefinedIOSVibration:(NSString *)effectName)
+// Create an instance
+HapticlabsImpl *hapticlabsInstance = [[HapticlabsImpl alloc] init];
 
-+ (BOOL)requiresMainQueueSetup
-{
-  return NO;
-}
-
+// Thanks to this guard, we won't compile this code when we build for the old
+// architecture.
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
-    return std::make_shared<facebook::react::HapticlabsSpecJSI>(params);
+    (const facebook::react::ObjCTurboModule::InitParams &)params {
+  return std::make_shared<facebook::react::NativeHapticlabsSpecJSI>(params);
 }
 #endif
+
+- (nonnull NSDictionary *)getAndroidConstants {
+  // Return an empty dictionary as there are no Android constants on iOS
+  return @{};
+}
+
+- (void)isAudioMuted:(nonnull RCTPromiseResolveBlock)resolve
+              reject:(nonnull RCTPromiseRejectBlock)reject {
+  [hapticlabsInstance isAudioMuted:resolve withRejecter:reject];
+}
+
+- (void)isHapticsMuted:(nonnull RCTPromiseResolveBlock)resolve
+                reject:(nonnull RCTPromiseRejectBlock)reject {
+  [hapticlabsInstance isHapticsMuted:resolve withRejecter:reject];
+}
+
+- (void)playAHAP:(nonnull NSString *)path
+         resolve:(nonnull RCTPromiseResolveBlock)resolve
+          reject:(nonnull RCTPromiseRejectBlock)reject {
+  [hapticlabsInstance playAHAP:path withResolver:resolve withRejecter:reject];
+}
+
+- (void)playAndroidHaptics:(nonnull NSString *)directoryPath
+                   resolve:(nonnull RCTPromiseResolveBlock)resolve
+                    reject:(nonnull RCTPromiseRejectBlock)reject {
+  // No-op on iOS
+  resolve(nil);
+}
+
+- (void)playHLA:(nonnull NSString *)path
+        resolve:(nonnull RCTPromiseResolveBlock)resolve
+         reject:(nonnull RCTPromiseRejectBlock)reject {
+  // No-op on iOS
+  resolve(nil);
+}
+
+- (void)playOGG:(nonnull NSString *)path
+        resolve:(nonnull RCTPromiseResolveBlock)resolve
+         reject:(nonnull RCTPromiseRejectBlock)reject {
+  // No-op on iOS
+  resolve(nil);
+}
+
+- (void)playPredefinedHaptics:(nonnull NSString *)signal {
+  [hapticlabsInstance playPredefinedIOSVibration:signal];
+}
+
+- (void)preloadAndroidHaptics:(nonnull NSString *)directoryPath {
+  // No-op on iOS
+}
+
+- (void)preloadOGG:(nonnull NSString *)path {
+  // No-op on iOS
+}
+
+- (void)setAudioMute:(BOOL)mute {
+  [hapticlabsInstance setAudioMute:mute];
+}
+
+- (void)setHapticsMute:(BOOL)mute {
+  [hapticlabsInstance setHapticsMute:mute];
+}
+
+- (void)unloadAllAndroidHaptics {
+  // No-op on iOS
+}
+
+- (void)unloadAndroidHaptics:(nonnull NSString *)path {
+  // No-op on iOS
+}
+
+- (void)unloadOGG:(nonnull NSString *)path {
+  // No-op on iOS
+}
 
 @end
