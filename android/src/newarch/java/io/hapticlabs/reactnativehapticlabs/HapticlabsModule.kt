@@ -53,6 +53,9 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     implementation.playOGG(path, promise)
   }
 
+  override fun playHAC(path: String, promise: Promise) {
+    implementation.playHAC(path, promise)
+  }
 
   override fun playPredefinedHaptics(name: String) {
     implementation.playPredefinedAndroidVibration(name)

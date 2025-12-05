@@ -39,6 +39,12 @@ RCT_REMAP_METHOD(playOGG, playOGGPath:(nonnull NSString *)path
   // No-op on iOS
   resolve(nil);
 }
+RCT_REMAP_METHOD(playHAC, playHACPath:(nonnull NSString *)path
+         resolve:(nonnull RCTPromiseResolveBlock) resolve
+         reject:(nonnull RCTPromiseRejectBlock) reject){
+  // No-op on iOS
+  resolve(nil);
+}
 RCT_REMAP_METHOD(playPredefinedHaptics, playPredefinedHapticsArg:(nonnull NSString *)signal){
   [hapticlabsInstance playPredefinedIOSVibration:signal];
 }
@@ -114,6 +120,13 @@ RCT_REMAP_METHOD(getAndroidConstants, getAndroidConstantsResolve:(RCTPromiseReso
 }
 
 - (void)playOGG:(nonnull NSString *)path
+        resolve:(nonnull RCTPromiseResolveBlock)resolve
+         reject:(nonnull RCTPromiseRejectBlock)reject {
+  // No-op on iOS
+  resolve(nil);
+}
+
+- (void)playHAC:(nonnull NSString *)path
         resolve:(nonnull RCTPromiseResolveBlock)resolve
          reject:(nonnull RCTPromiseRejectBlock)reject {
   // No-op on iOS

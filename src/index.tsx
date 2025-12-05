@@ -34,7 +34,31 @@ export async function playOGG(path: string): Promise<void> {
 }
 
 /**
- * This command will play a haptic pattern from the specified `directoryPath`.
+ * This command will play a HAC file from the specified `path`, including corresponding audio files.
+ *
+ * The HAC file itself contains multiple haptic patterns for different haptic support levels.
+ * The device will automatically select and play the optimal haptic pattern based on its haptic support level.
+ *
+ * *Note*: This command is only supported on Android.
+ * @param path The path to the HAC file. This can be a path relative to the assets directory or a fully qualified path.
+ * @returns A promise that resolves when the HAC file has been played.
+ */
+export async function playHAC(path: string): Promise<void> {
+  if (Platform.OS === 'android') {
+    return NativeHapticlabs.playHAC(path);
+  } else {
+    console.error('HAC playback is only supported on Android');
+  }
+}
+
+/**
+ * This command will play a haptic pattern from the specified `directoryOrHACPath`.
+ *
+ * The type of input will be automatically detected:
+ *
+ * If a HAC file is specified, the function behaves like `playHAC`.
+ *
+ * If a directory is specified, the function will select and play the appropriate haptic pattern based on the device's haptic support level.
  * Depending on the device's haptic support level, different haptic feedback will be played.
  * For instance, if the device's haptic support level is 3, the device will play the haptic pattern
  * specified in the `lvl3` subdirectory. If the device's haptic support level is 0, no haptic feedback will be played.
@@ -49,12 +73,14 @@ export async function playOGG(path: string): Promise<void> {
  *     └── main.ogg
  * ```
  * *Note*: This command is only supported on Android.
- * @param directoryPath The path to the haptic pattern directory. This can be a path relative to the assets directory or a fully qualified path.
+ * @param directoryOrHACPath The path to the haptic pattern directory or HAC file. This can be a path relative to the assets directory or a fully qualified path.
  * @returns A promise that resolves when the haptic pattern has been played.
  */
-export async function playAndroidHaptics(directoryPath: string): Promise<void> {
+export async function playAndroidHaptics(
+  directoryOrHACPath: string
+): Promise<void> {
   if (Platform.OS === 'android') {
-    return await NativeHapticlabs.playAndroidHaptics(directoryPath);
+    return await NativeHapticlabs.playAndroidHaptics(directoryOrHACPath);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -80,19 +106,19 @@ export function preloadOGG(path: string): void {
 }
 
 /**
- * This command will preload haptic patterns from the specified `directoryPath`.
+ * This command will preload haptic patterns from the specified `directoryOrHACPath`.
  *
  * This is useful for reducing latency when playing haptic patterns. Currently,
  * only OGG files will be preloaded and cached, and only so if their
  * uncompressed size is less than 1 MB
  * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
  *
- * @param directoryPath The path to the haptic pattern directory. See the
- * `playAndroidHaptics` documentation for the expected directory structure.
+ * @param directoryOrHACPath The path to the haptic pattern directory or HAC file. See the
+ * `playAndroidHaptics` documentation for further details.
  */
-export function preloadAndroidHaptics(directoryPath: string): void {
+export function preloadAndroidHaptics(directoryOrHACPath: string): void {
   if (Platform.OS === 'android') {
-    NativeHapticlabs.preloadAndroidHaptics(directoryPath);
+    NativeHapticlabs.preloadAndroidHaptics(directoryOrHACPath);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -117,18 +143,18 @@ export function unloadOGG(path: string): void {
 
 /**
  * This command will unload the haptic patterns loaded from the specified
- * `path`.
+ * `directoryOrHACPath`.
  *
  * This is useful for freeing up memory when the haptic patterns are no longer
  * needed, and to clear the cache and enforce a reload if the files have
  * changed.
  *
- * @param path The path to the haptic pattern directory to unload. See the
- * `playAndroidHaptics` documentation for the expected directory structure.
+ * @param directoryOrHACPath The path to the haptic pattern directory or HAC file. See the
+ * `playAndroidHaptics` documentation for further details
  */
-export function unloadAndroidHaptics(path: string): void {
+export function unloadAndroidHaptics(directoryOrHACPath: string): void {
   if (Platform.OS === 'android') {
-    NativeHapticlabs.unloadAndroidHaptics(path);
+    NativeHapticlabs.unloadAndroidHaptics(directoryOrHACPath);
   } else {
     console.error('Android haptics are only supported on Android');
   }

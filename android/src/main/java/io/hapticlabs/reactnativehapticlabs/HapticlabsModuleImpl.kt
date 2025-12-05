@@ -91,6 +91,10 @@ class HapticlabsModuleImpl(private val reactContext: ContextWrapper) {
     hapticlabsPlayer.playOGG(path) { promise.resolve(null) }
   }
 
+  fun playHAC(path: String, promise: Promise) {
+    hapticlabsPlayer.playHAC(path) { promise.resolve(null) }
+  }
+
   fun playPredefinedAndroidVibration(name: String) {
     hapticlabsPlayer.playBuiltIn(name)
   }
