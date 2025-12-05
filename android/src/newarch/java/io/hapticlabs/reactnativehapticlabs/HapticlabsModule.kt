@@ -1,6 +1,7 @@
-package java.io.hapticlabs.reactnativehapticlabs
+package io.hapticlabs.reactnativehapticlabs
 
 import android.content.ContextWrapper
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
@@ -13,7 +14,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   private val implementation: HapticlabsModuleImpl = HapticlabsModuleImpl(reactContext)
 
   override fun getAndroidConstants(): WritableMap {
-    return implementation.getAndroidConstants()
+    return Arguments.makeNativeMap(implementation.getConstants())
   }
 
   override fun getName(): String {
@@ -79,7 +80,6 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
   override fun setHapticsMute(mute: Boolean) {
     // Not meaningful on Android
   }
-
 
 
   companion object {

@@ -10,64 +10,45 @@ import io.hapticlabs.hapticlabsplayer.HapticlabsPlayer
 class HapticlabsModuleImpl(private val reactContext: ContextWrapper) {
   private val hapticlabsPlayer: HapticlabsPlayer = HapticlabsPlayer(reactContext)
 
-  fun getAndroidConstants(): WritableMap {
-    val constants = Arguments.createMap()
-    constants.putInt(
-      "hapticSupportLevel",
-      hapticlabsPlayer.hapticsCapabilities.hapticSupportLevel.toInt()
-    )
-    constants.putBoolean(
-      "areOnOffHapticsSupported",
-      hapticlabsPlayer.hapticsCapabilities.supportsOnOff
-    )
-    constants.putBoolean(
-      "areAmplitudeControlHapticsSupported",
-      hapticlabsPlayer.hapticsCapabilities.supportsAmplitudeControl
-    )
-    constants.putBoolean(
-      "areAudioCoupledHapticsSupported",
-      hapticlabsPlayer.hapticsCapabilities.supportsAudioCoupled
-    )
-    constants.putBoolean(
-      "areEnvelopeHapticsSupported",
-      hapticlabsPlayer.hapticsCapabilities.supportsEnvelopeEffects
-    )
+  fun getConstants(): Map<String, Any> {
+    val constants = HashMap<String, Any>()
+    constants["hapticSupportLevel"] = hapticlabsPlayer.hapticsCapabilities.hapticSupportLevel
+    constants["areOnOffHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsOnOff
+    constants["areAmplitudeControlHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsAmplitudeControl
+    constants["areAudioCoupledHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsAudioCoupled
+    constants["areEnvelopeHapticsSupported"] = hapticlabsPlayer.hapticsCapabilities.supportsEnvelopeEffects
 
     if (!hapticlabsPlayer.hapticsCapabilities.resonantFrequency.isNaN()) {
-      constants.putDouble(
-        "resonanceFrequency",
-        hapticlabsPlayer.hapticsCapabilities.resonantFrequency.toDouble()
-      )
+      constants["resonanceFrequency"] = hapticlabsPlayer.hapticsCapabilities.resonantFrequency
     }
     if (!hapticlabsPlayer.hapticsCapabilities.qFactor.isNaN()) {
-      constants.putDouble("qFactor", hapticlabsPlayer.hapticsCapabilities.qFactor.toDouble())
+      constants["qFactor"] = hapticlabsPlayer.hapticsCapabilities.qFactor
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
       hapticlabsPlayer.hapticsCapabilities.frequencyResponse?.let {
-        constants.putDouble("minFrequency", it.minFrequencyHz.toDouble())
-        constants.putDouble("maxFrequency", it.maxFrequencyHz.toDouble())
-        constants.putDouble("maxAcceleration", it.maxOutputAccelerationGs.toDouble())
+        constants["minFrequency"] = it.minFrequencyHz
+        constants["maxFrequency"] = it.maxFrequencyHz
+        constants["maxAcceleration"] = it.maxOutputAccelerationGs
 
         // Serialize the frequency response
         val frequencyResponseMap = it.frequenciesOutputAcceleration
-        val frequencyResponseKeys = Arguments.createArray()
-        val frequencyResponseValues = Arguments.createArray()
-
-        for (index in 0 until frequencyResponseMap.size()) {
-          frequencyResponseKeys.pushDouble(frequencyResponseMap.keyAt(index).toDouble())
-          frequencyResponseValues.pushDouble(frequencyResponseMap.valueAt(index).toDouble())
+        val frequencyResponseKeys = Array(frequencyResponseMap.size()){
+            index -> frequencyResponseMap.keyAt(index)
+        }
+        val frequencyResponseValues = Array<Float>(frequencyResponseMap.size()) {
+            index -> frequencyResponseMap.valueAt(index)
         }
 
-        constants.putArray("frequencyResponseKeys", frequencyResponseKeys)
-        constants.putArray("frequencyResponseValues", frequencyResponseValues)
+        constants["frequencyResponseKeys"] = frequencyResponseKeys
+        constants["frequencyResponseValues"] = frequencyResponseValues
       }
 
       hapticlabsPlayer.hapticsCapabilities.envelopeEffectInfo?.let {
-        constants.putLong("envelopeControlPointMinDurationMillis", it.minControlPointDurationMillis)
-        constants.putLong("envelopeControlPointMaxDurationMillis", it.maxControlPointDurationMillis)
-        constants.putLong("envelopeMaxDuration", it.maxDurationMillis)
-        constants.putInt("envelopeMaxControlPoints", it.maxSize)
+        constants["envelopeControlPointMinDurationMillis"] = it.minControlPointDurationMillis
+        constants["envelopeControlPointMaxDurationMillis"] = it.maxControlPointDurationMillis
+        constants["envelopeMaxDurationMillis"] = it.maxDurationMillis
+        constants["envelopeMaxControlPointCount"] = it.maxSize
       }
     }
 

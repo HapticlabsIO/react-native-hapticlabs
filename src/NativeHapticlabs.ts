@@ -113,7 +113,7 @@ export interface Spec extends TurboModule {
      *
      * *Note*: This value is only supported on Android.
      */
-    readonly androidHapticSupportLevel: 0 | 1 | 2 | 3 | 4;
+    readonly hapticSupportLevel: 0 | 1 | 2 | 3 | 4;
 
     /**
      * Whether the device supports on/off haptic feedback.

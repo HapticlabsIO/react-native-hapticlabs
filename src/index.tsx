@@ -149,20 +149,38 @@ export function unloadAllAndroidHaptics(): void {
   }
 }
 
-const constants = NativeHapticlabs.getAndroidConstants();
+const constants = Platform.OS === 'android' ? NativeHapticlabs.getAndroidConstants?.() ?? NativeHapticlabs.getConstants?.() ?? {} : {
+  hapticSupportLevel: 4 as const,
+  areOnOffHapticsSupported: true,
+  areAmplitudeControlHapticsSupported: true,
+  areAudioCoupledHapticsSupported: true,
+  areEnvelopeHapticsSupported: true,
+  resonanceFrequency: null,
+  qFactor: null,
+  minFrequency: null,
+  maxFrequency: null,
+  maxAcceleration: null,
+  frequencyResponseKeys: null,
+  frequencyResponseValues: null,
+  envelopeControlPointMinDurationMillis: null,
+  envelopeControlPointMaxDurationMillis: null,
+  envelopeMaxDurationMillis: null,
+  envelopeMaxControlPointCount: null,
+};
 
 /**
  * The device's haptic support level.
- * This value is a number between 0 and 3, where:
+ * This value is a number between 0 and 4, where:
  * - 0: The device does not support haptics.
  * - 1: The device supports on / off haptic feedback.
  * - 2: The device supports amplitude control haptic feedback.
- * - 3: The device supports fully customizable haptic feedback.
+ * - 3: The device supports fully customizable audio-coupled haptic feedback.
+ * - 4: The device supports parametric envelope-controlled haptic feedback.
  *
  * *Note*: This value is only supported on Android.
  */
 export const androidHapticSupportLevel: 0 | 1 | 2 | 3 | 4 =
-  constants.androidHapticSupportLevel ?? 0;
+  constants.hapticSupportLevel ?? 0;
 
 /**
  * Whether the device supports on/off haptic feedback.

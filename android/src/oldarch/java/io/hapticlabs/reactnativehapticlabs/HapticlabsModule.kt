@@ -60,7 +60,7 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
 
 
   @ReactMethod
-  fun playPredefinedAndroidVibration(name: String) {
+  fun playPredefinedHaptics(name: String) {
     implementation.playPredefinedAndroidVibration(name)
   }
 
