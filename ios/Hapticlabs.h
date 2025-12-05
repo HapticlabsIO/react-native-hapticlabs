@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#if RCT_NEW_ARCH_ENABLED
 
 #import <HapticlabsSpec/HapticlabsSpec.h>
 @interface Hapticlabs: NSObject <NativeHapticlabsSpec>
