@@ -1,5 +1,5 @@
-import { Platform } from "react-native";
-import NativeHapticlabs from "./NativeHapticlabs";
+import { Platform } from 'react-native';
+import NativeHapticlabs from './NativeHapticlabs';
 
 /**
  * This command will play an HLA file from the specified `path`, including corresponding audio files.
@@ -149,24 +149,29 @@ export function unloadAllAndroidHaptics(): void {
   }
 }
 
-const constants = Platform.OS === 'android' ? NativeHapticlabs.getAndroidConstants?.() ?? NativeHapticlabs.getConstants?.() ?? {} : {
-  hapticSupportLevel: 4 as const,
-  areOnOffHapticsSupported: true,
-  areAmplitudeControlHapticsSupported: true,
-  areAudioCoupledHapticsSupported: true,
-  areEnvelopeHapticsSupported: true,
-  resonanceFrequency: null,
-  qFactor: null,
-  minFrequency: null,
-  maxFrequency: null,
-  maxAcceleration: null,
-  frequencyResponseKeys: null,
-  frequencyResponseValues: null,
-  envelopeControlPointMinDurationMillis: null,
-  envelopeControlPointMaxDurationMillis: null,
-  envelopeMaxDurationMillis: null,
-  envelopeMaxControlPointCount: null,
-};
+const constants =
+  Platform.OS === 'android'
+    ? NativeHapticlabs.getAndroidConstants?.() ??
+      NativeHapticlabs.getConstants?.() ??
+      {}
+    : {
+        hapticSupportLevel: 4 as const,
+        areOnOffHapticsSupported: true,
+        areAmplitudeControlHapticsSupported: true,
+        areAudioCoupledHapticsSupported: true,
+        areEnvelopeHapticsSupported: true,
+        resonanceFrequency: null,
+        qFactor: null,
+        minFrequency: null,
+        maxFrequency: null,
+        maxAcceleration: null,
+        frequencyResponseKeys: null,
+        frequencyResponseValues: null,
+        envelopeControlPointMinDurationMillis: null,
+        envelopeControlPointMaxDurationMillis: null,
+        envelopeMaxDurationMillis: null,
+        envelopeMaxControlPointCount: null,
+      };
 
 /**
  * The device's haptic support level.
@@ -273,8 +278,7 @@ export const maxFrequency: number | null = constants.maxFrequency ?? null;
  *
  * **Note**: This value is only supported on Android.
  */
-export const maxAcceleration: number | null =
-  constants.maxAcceleration ?? null;
+export const maxAcceleration: number | null = constants.maxAcceleration ?? null;
 
 // Deserialize the frequency response data from the native module
 const frequencyResponseKeys = constants.frequencyResponseKeys;
@@ -297,7 +301,12 @@ if (frequencyResponseKeys != null && frequencyResponseValues != null) {
     for (let i = 0; i < frequencyResponseKeys.length; i++) {
       const frequency = frequencyResponseKeys[i];
       const acceleration = frequencyResponseValues[i];
-      if (frequency != null && acceleration != null && !isNaN(frequency) && !isNaN(acceleration)) {
+      if (
+        frequency != null &&
+        acceleration != null &&
+        !isNaN(frequency) &&
+        !isNaN(acceleration)
+      ) {
         frequencyResponse.set(frequency, acceleration);
       }
     }
@@ -416,7 +425,7 @@ export function playPredefinedHaptics(signal: {
   if (Platform.OS === 'android' && signal.android !== undefined) {
     NativeHapticlabs.playPredefinedHaptics(signal.android);
   } else if (Platform.OS === 'ios' && signal.ios !== undefined) {
-    NativeHapticlabs.playPredefinedHaptics( signal.ios);
+    NativeHapticlabs.playPredefinedHaptics(signal.ios);
   }
 }
 
