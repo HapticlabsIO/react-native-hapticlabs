@@ -58,6 +58,10 @@ class HapticlabsModule(private val reactContext: ReactApplicationContext) :
     implementation.playOGG(path, promise)
   }
 
+  @ReactMethod
+  fun playHAC(path: String, promise: Promise) {
+    implementation.playHAC(path, promise)
+  }
 
   @ReactMethod
   fun playPredefinedHaptics(name: String) {

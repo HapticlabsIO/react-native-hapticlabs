@@ -19,6 +19,7 @@ import {
   minFrequency,
   playAHAP,
   playAndroidHaptics,
+  playHAC,
   playHaptics,
   playHLA,
   playOGG,
@@ -104,7 +105,7 @@ export default function App() {
            */
           playHaptics({
             iosPath: RNFS.MainBundlePath + '/AHAP/Button.ahap',
-            androidPath: 'Android samples/button',
+            androidPath: 'Android samples/Button.hac',
           }).then(() => {
             console.log('Haptics played');
           });
@@ -179,7 +180,8 @@ export default function App() {
                * - `0`: The device does not support haptics.
                * - `1`: The device supports on/off haptic feedback.
                * - `2`: The device supports amplitude control haptic feedback.
-               * - `3`: The device supports fully customizable haptic feedback.
+               * - `3`: The device supports fully customizable audio-coupled haptic feedback.
+               * - `4`: The device supports parametric envelope-controlled haptic feedback.
                */
               androidHapticSupportLevel
             }
@@ -188,14 +190,14 @@ export default function App() {
             title="Preload Android Haptics"
             onPress={() => {
               /**
-               * This command will preload the `Android samples/purringCat` pattern.
+               * This command will preload the `Android samples/Purring cat.hac` pattern.
                *
                * This is useful for reducing latency when playing haptic patterns. Currently,
                * only OGG files will be preloaded and cached, and only so if their
                * uncompressed size is less than 1 MB
                * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
                */
-              preloadAndroidHaptics('Android samples/purringCat');
+              preloadAndroidHaptics('Android samples/Purring cat.hac');
               console.log('Android haptics preloaded');
             }}
           />
@@ -203,13 +205,13 @@ export default function App() {
             title="Unload Android Haptics"
             onPress={() => {
               /**
-               * This command will unload the `Android samples/purringCat` pattern.
+               * This command will unload the `Android samples/Purring cat.hac` pattern.
                *
                * This is useful for freeing up memory when the haptic patterns are no longer
                * needed, and to clear the cache and enforce a reload if the files have
                * changed.
                */
-              unloadAndroidHaptics('Android samples/purringCat');
+              unloadAndroidHaptics('Android samples/Purring cat.hac');
               console.log('Android haptics unloaded');
             }}
           />
@@ -231,16 +233,12 @@ export default function App() {
             title="Play Android Haptics"
             onPress={() => {
               /**
-               * This command will play a haptic pattern from the directory
-               * `Android samples/Double click with audio-Simple pattern-Single Vibration`.
-               * Depending on the device's haptic support level, different haptic
-               * feedback will be played.
-               * For haptic support level 3, "Double click with audio" will be played.
-               * For haptic support level 2, "Simple pattern" will be played.
-               * For haptic support level 1, "Single Vibration" will be played.
-               * For haptic support level 0, no haptic feedback will be played.
+               * This command will play the Purring cat HAC file located at
+               * `Android samples/Purring cat.hac`. Internally, the most
+               * advanced available haptics API will be used based on the device's
+               * haptic support level.
                */
-              playAndroidHaptics('Android samples/purringCat').then(() => {
+              playAndroidHaptics('Android samples/Purring cat.hac').then(() => {
                 console.log('Android haptics played');
               });
             }}
@@ -250,12 +248,25 @@ export default function App() {
             onPress={() => {
               /**
                * This command will play the .hla file located at
-               * `Android samples/Double click with audio/lvl2/main.hla`.
+               * `Android samples/Double click with audio/main.hla`.
                * Note that this .hla file references an audio file, which will be played
                * along with the haptic feedback.
                */
-              playHLA('Android samples/8bit/lvl2/main.hla').then(() => {
+              playHLA('Android samples/8bit/main.hla').then(() => {
                 console.log('HLA played');
+              });
+            }}
+          />
+          <Button
+            title="Play HAC"
+            onPress={() => {
+              /**
+               * This command will play the .hac file located at
+               * `Android samples/8bit.hac`. The optimal haptics API will be used
+               * based on the device's haptic support level.
+               */
+              playHAC('Android samples/8bit.hac').then(() => {
+                console.log('HAC played');
               });
             }}
           />
@@ -264,14 +275,14 @@ export default function App() {
             onPress={() => {
               /**
                * This command will preload the OGG file
-               * `Android samples/8bit/lvl3/main.ogg`.
+               * `Android samples/8bit/main.ogg`.
                *
                * This is useful for reducing latency. Note that currently, OGG
                * files will only be preloaded and cached if their uncompressed
                * size is less than 1 MB
                * (see [Android's SoundPool documentation](https://developer.android.com/reference/android/media/SoundPool)).
                */
-              preloadOGG('Android samples/8bit/lvl3/main.ogg');
+              preloadOGG('Android samples/8bit/main.ogg');
             }}
           />
           <Button
@@ -279,13 +290,13 @@ export default function App() {
             onPress={() => {
               /**
                * This command will unload the OGG file
-               * `Android samples/8bit/lvl3/main.ogg`.
+               * `Android samples/8bit/main.ogg`.
                *
                * This is useful for freeing up memory when the haptic patterns
                * are no longer needed, and to clear the cache and enforce a
                * reload if the file has changed.
                */
-              unloadOGG('Android samples/8bit/lvl3/main.ogg');
+              unloadOGG('Android samples/8bit/main.ogg');
               console.log('OGG unloaded');
             }}
           />
@@ -294,11 +305,11 @@ export default function App() {
             onPress={() => {
               /**
                * This command will play the .ogg file located at
-               * `Ramp + click2-Vibration A-Subtle Repetitive Notification/lvl3/main.ogg`.
+               * `Android samples/8bit/main.ogg`.
                * Note that .ogg playback requires the device to support haptics level 3:
                * If the device's haptic support is less than 3, no haptic feedback will be played.
                */
-              playOGG('Android samples/8bit/lvl3/main.ogg').then(() => {
+              playOGG('Android samples/8bit/main.ogg').then(() => {
                 console.log('OGG played');
               });
             }}

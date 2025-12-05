@@ -108,7 +108,7 @@ dependencies {
   implementation 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.google.code.gson:gson:2.13.2'
-  implementation "io.hapticlabs:hapticlabsplayer:0.5.0"
+  implementation "io.hapticlabs:hapticlabsplayer:0.6.0"
     implementation 'org.chromium.net:cronet-embedded:141.7340.3'
 }
 
