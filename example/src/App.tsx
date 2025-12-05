@@ -21,7 +21,6 @@ import {
   playAndroidHaptics,
   playHaptics,
   playHLA,
-  playHLE,
   playOGG,
   playPredefinedHaptics,
   preloadAndroidHaptics,
@@ -257,20 +256,6 @@ export default function App() {
                */
               playHLA('Android samples/8bit/lvl2/main.hla').then(() => {
                 console.log('HLA played');
-              });
-            }}
-          />
-          <Button
-            title="Play PWLE"
-            onPress={() => {
-              /**
-               * This command will play the .hla file located at
-               * `Android samples/Double click with audio/lvl2/main.hla`.
-               * Note that this .hla file references an audio file, which will be played
-               * along with the haptic feedback.
-               */
-              playHLE('Android samples/button/lvl2_5/main.hle').then(() => {
-                console.log('HLE played');
               });
             }}
           />

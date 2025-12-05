@@ -1,21 +1,5 @@
-import { NativeModules, Platform } from 'react-native';
-
-const LINKING_ERROR =
-  `The package 'react-native-hapticlabs' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-const Hapticlabs = NativeModules.Hapticlabs
-  ? NativeModules.Hapticlabs
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+import { Platform } from 'react-native';
+import NativeHapticlabs from './NativeHapticlabs';
 
 /**
  * This command will play an HLA file from the specified `path`, including corresponding audio files.
@@ -26,26 +10,9 @@ const Hapticlabs = NativeModules.Hapticlabs
  */
 export async function playHLA(path: string): Promise<void> {
   if (Platform.OS === 'android') {
-    return await Hapticlabs.playHLA(path);
+    return await NativeHapticlabs.playHLA(path);
   } else {
     console.error('HLA playback is only supported on Android');
-  }
-}
-
-/**
- * This command will play an HLE file from the specified `path`, including corresponding audio files.
- *
- * If the device does not support envelope-controlled haptics, no haptic feedback will be played.
- *
- * *Note*: This command is only supported on Android.
- * @param path The path to the HLE file. This can be a path relative to the assets directory or a fully qualified path.
- * @returns A promise that resolves when the HLE file has been played.
- */
-export async function playHLE(path: string): Promise<void> {
-  if (Platform.OS === 'android') {
-    return await Hapticlabs.playHLE(path);
-  } else {
-    console.error('HLE playback is only supported on Android');
   }
 }
 
@@ -60,7 +27,7 @@ export async function playHLE(path: string): Promise<void> {
  */
 export async function playOGG(path: string): Promise<void> {
   if (Platform.OS === 'android') {
-    return await Hapticlabs.playOGG(path);
+    return await NativeHapticlabs.playOGG(path);
   } else {
     console.error('OGG playback is only supported on Android');
   }
@@ -87,7 +54,7 @@ export async function playOGG(path: string): Promise<void> {
  */
 export async function playAndroidHaptics(directoryPath: string): Promise<void> {
   if (Platform.OS === 'android') {
-    return await Hapticlabs.playAndroidHaptics(directoryPath);
+    return await NativeHapticlabs.playAndroidHaptics(directoryPath);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -106,7 +73,7 @@ export async function playAndroidHaptics(directoryPath: string): Promise<void> {
  */
 export function preloadOGG(path: string): void {
   if (Platform.OS === 'android') {
-    Hapticlabs.preloadOGG(path);
+    NativeHapticlabs.preloadOGG(path);
   } else {
     console.error('OGG haptics are only supported on Android');
   }
@@ -125,7 +92,7 @@ export function preloadOGG(path: string): void {
  */
 export function preloadAndroidHaptics(directoryPath: string): void {
   if (Platform.OS === 'android') {
-    Hapticlabs.preloadAndroidHaptics(directoryPath);
+    NativeHapticlabs.preloadAndroidHaptics(directoryPath);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -142,7 +109,7 @@ export function preloadAndroidHaptics(directoryPath: string): void {
  */
 export function unloadOGG(path: string): void {
   if (Platform.OS === 'android') {
-    Hapticlabs.unloadOGG(path);
+    NativeHapticlabs.unloadOGG(path);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -161,7 +128,7 @@ export function unloadOGG(path: string): void {
  */
 export function unloadAndroidHaptics(path: string): void {
   if (Platform.OS === 'android') {
-    Hapticlabs.unloadAndroidHaptics(path);
+    NativeHapticlabs.unloadAndroidHaptics(path);
   } else {
     console.error('Android haptics are only supported on Android');
   }
@@ -176,24 +143,49 @@ export function unloadAndroidHaptics(path: string): void {
  */
 export function unloadAllAndroidHaptics(): void {
   if (Platform.OS === 'android') {
-    Hapticlabs.unloadAllAndroidHaptics();
+    NativeHapticlabs.unloadAllAndroidHaptics();
   } else {
     console.error('Android haptics are only supported on Android');
   }
 }
 
+const constants =
+  Platform.OS === 'android'
+    ? NativeHapticlabs.getAndroidConstants?.() ??
+      NativeHapticlabs.getConstants?.() ??
+      {}
+    : {
+        hapticSupportLevel: 4 as const,
+        areOnOffHapticsSupported: true,
+        areAmplitudeControlHapticsSupported: true,
+        areAudioCoupledHapticsSupported: true,
+        areEnvelopeHapticsSupported: true,
+        resonanceFrequency: null,
+        qFactor: null,
+        minFrequency: null,
+        maxFrequency: null,
+        maxAcceleration: null,
+        frequencyResponseKeys: null,
+        frequencyResponseValues: null,
+        envelopeControlPointMinDurationMillis: null,
+        envelopeControlPointMaxDurationMillis: null,
+        envelopeMaxDurationMillis: null,
+        envelopeMaxControlPointCount: null,
+      };
+
 /**
  * The device's haptic support level.
- * This value is a number between 0 and 3, where:
+ * This value is a number between 0 and 4, where:
  * - 0: The device does not support haptics.
  * - 1: The device supports on / off haptic feedback.
  * - 2: The device supports amplitude control haptic feedback.
- * - 3: The device supports fully customizable haptic feedback.
+ * - 3: The device supports fully customizable audio-coupled haptic feedback.
+ * - 4: The device supports parametric envelope-controlled haptic feedback.
  *
  * *Note*: This value is only supported on Android.
  */
-export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =
-  Hapticlabs.hapticSupportLevel ?? 0;
+export const androidHapticSupportLevel: 0 | 1 | 2 | 3 | 4 =
+  constants.hapticSupportLevel ?? 0;
 
 /**
  * Whether the device supports on/off haptic feedback.
@@ -204,7 +196,7 @@ export const androidHapticSupportLevel: 0 | 1 | 2 | 3 =
  * *Note**: This value is only supported on Android.
  */
 export const areOnOffHapticsSupported: boolean =
-  Hapticlabs.areOnOffHapticsSupported ?? false;
+  constants.areOnOffHapticsSupported ?? false;
 
 /**
  * Whether the device supports amplitude control haptic feedback.
@@ -215,7 +207,7 @@ export const areOnOffHapticsSupported: boolean =
  * **Note**: This value is only supported on Android.
  */
 export const areAmplitudeControlHapticsSupported: boolean =
-  Hapticlabs.areAmplitudeControlHapticsSupported ?? false;
+  constants.areAmplitudeControlHapticsSupported ?? false;
 
 /**
  * Whether the device supports audio coupled haptic feedback.
@@ -226,7 +218,7 @@ export const areAmplitudeControlHapticsSupported: boolean =
  * **Note**: This value is only supported on Android.
  */
 export const areAudioCoupledHapticsSupported: boolean =
-  Hapticlabs.areAudioCoupledHapticsSupported ?? false;
+  constants.areAudioCoupledHapticsSupported ?? false;
 
 /**
  * Whether the device supports envelope-controlled haptic feedback.
@@ -238,7 +230,7 @@ export const areAudioCoupledHapticsSupported: boolean =
  * **Note**: This value is only supported on Android.
  */
 export const areEnvelopeHapticsSupported: boolean =
-  Hapticlabs.areEnvelopeHapticsSupported ?? false;
+  constants.areEnvelopeHapticsSupported ?? false;
 
 /**
  * The device's haptic actuator's resonance frequency.
@@ -250,7 +242,7 @@ export const areEnvelopeHapticsSupported: boolean =
  * **Note**: This value is only supported on Android.
  */
 export const resonanceFrequency: number | null =
-  Hapticlabs.resonanceFrequency ?? null;
+  constants.resonanceFrequency ?? null;
 
 /**
  * The device's haptic actuator's q factor.
@@ -259,7 +251,7 @@ export const resonanceFrequency: number | null =
  *
  * **Note**: This value is only supported on Android.
  */
-export const qFactor: number | null = Hapticlabs.qFactor ?? null;
+export const qFactor: number | null = constants.qFactor ?? null;
 
 /**
  * The device's haptic actuator's self-reported minimum frequency.
@@ -269,7 +261,7 @@ export const qFactor: number | null = Hapticlabs.qFactor ?? null;
  * **Note**: With audio-coupled haptics (OGG files), there are no frequency
  * limits.
  */
-export const minFrequency: number | null = Hapticlabs.minFrequency ?? null;
+export const minFrequency: number | null = constants.minFrequency ?? null;
 
 /**
  * The device's haptic actuator's self-reported maximum frequency.
@@ -279,19 +271,18 @@ export const minFrequency: number | null = Hapticlabs.minFrequency ?? null;
  * **Note**: With audio-coupled haptics (OGG files), there are no frequency
  * limits.
  */
-export const maxFrequency: number | null = Hapticlabs.maxFrequency ?? null;
+export const maxFrequency: number | null = constants.maxFrequency ?? null;
 
 /**
  * The device's haptic actuator's self-reported maximum acceleration (in Gs).
  *
  * **Note**: This value is only supported on Android.
  */
-export const maxAcceleration: number | null =
-  Hapticlabs.maxAcceleration ?? null;
+export const maxAcceleration: number | null = constants.maxAcceleration ?? null;
 
 // Deserialize the frequency response data from the native module
-const frequencyResponseKeys = Hapticlabs.frequencyResponseKeys;
-const frequencyResponseValues = Hapticlabs.frequencyResponseValues;
+const frequencyResponseKeys = constants.frequencyResponseKeys;
+const frequencyResponseValues = constants.frequencyResponseValues;
 
 /**
  * The device's haptic actuator's self-reported frequency response.
@@ -308,9 +299,14 @@ if (frequencyResponseKeys != null && frequencyResponseValues != null) {
     // Valid frequency response data
     frequencyResponse = new Map<number, number>();
     for (let i = 0; i < frequencyResponseKeys.length; i++) {
-      const frequency = parseFloat(frequencyResponseKeys[i]);
-      const acceleration = parseFloat(frequencyResponseValues[i]);
-      if (!isNaN(frequency) && !isNaN(acceleration)) {
+      const frequency = frequencyResponseKeys[i];
+      const acceleration = frequencyResponseValues[i];
+      if (
+        frequency != null &&
+        acceleration != null &&
+        !isNaN(frequency) &&
+        !isNaN(acceleration)
+      ) {
         frequencyResponse.set(frequency, acceleration);
       }
     }
@@ -325,7 +321,7 @@ export { frequencyResponse };
  * **Note**: This value is only supported on Android.
  */
 export const envelopeControlPointMinDurationMillis: number | null =
-  Hapticlabs.envelopeControlPointMinDurationMillis ?? null;
+  constants.envelopeControlPointMinDurationMillis ?? null;
 
 /**
  * The maximum duration (in milliseconds) for an envelope control point.
@@ -333,7 +329,7 @@ export const envelopeControlPointMinDurationMillis: number | null =
  * **Note**: This value is only supported on Android.
  */
 export const envelopeControlPointMaxDurationMillis: number | null =
-  Hapticlabs.envelopeControlPointMaxDurationMillis ?? null;
+  constants.envelopeControlPointMaxDurationMillis ?? null;
 
 /**
  * The maximum duration (in milliseconds) for an envelope effect.
@@ -341,7 +337,7 @@ export const envelopeControlPointMaxDurationMillis: number | null =
  * **Note**: This value is only supported on Android.
  */
 export const envelopeMaxDurationMillis: number | null =
-  Hapticlabs.envelopeMaxDuration ?? null;
+  constants.envelopeMaxDurationMillis ?? null;
 
 /**
  * The maximum number of control points for an envelope effect.
@@ -349,7 +345,7 @@ export const envelopeMaxDurationMillis: number | null =
  * **Note**: This value is only supported on Android.
  */
 export const envelopeMaxControlPointCount: number | null =
-  Hapticlabs.envelopeMaxControlPoints ?? null;
+  constants.envelopeMaxControlPointCount ?? null;
 
 /**
  * This command will play an AHAP file from the specified `path`, including corresponding AHAP files and audio files.
@@ -360,7 +356,7 @@ export const envelopeMaxControlPointCount: number | null =
  */
 export async function playAHAP(path: string): Promise<void> {
   if (Platform.OS === 'ios') {
-    return await Hapticlabs.playAHAP(path);
+    return await NativeHapticlabs.playAHAP(path);
   } else {
     console.error('AHAP is only supported on iOS');
   }
@@ -380,9 +376,9 @@ export async function playHaptics({
   androidPath: string;
 }): Promise<void> {
   if (Platform.OS === 'ios') {
-    return Hapticlabs.playAHAP(iosPath);
+    return NativeHapticlabs.playAHAP(iosPath);
   } else if (Platform.OS === 'android') {
-    return Hapticlabs.playAndroidHaptics(androidPath);
+    return NativeHapticlabs.playAndroidHaptics(androidPath);
   } else {
     console.error('Haptics are only supported on iOS and Android');
   }
@@ -427,9 +423,9 @@ export function playPredefinedHaptics(signal: {
   ios?: IOSPredefinedHaptics;
 }): void {
   if (Platform.OS === 'android' && signal.android !== undefined) {
-    Hapticlabs.playPredefinedAndroidVibration(signal.android);
+    NativeHapticlabs.playPredefinedHaptics(signal.android);
   } else if (Platform.OS === 'ios' && signal.ios !== undefined) {
-    Hapticlabs.playPredefinedIOSVibration(signal.ios);
+    NativeHapticlabs.playPredefinedHaptics(signal.ios);
   }
 }
 
@@ -444,7 +440,7 @@ export function playPredefinedHaptics(signal: {
  */
 export function setHapticsMute(mute: boolean): void {
   if (Platform.OS === 'ios') {
-    Hapticlabs.setHapticsMute(mute);
+    NativeHapticlabs.setHapticsMute(mute);
   } else {
     console.error('Haptics mute state is only supported on iOS');
   }
@@ -461,7 +457,7 @@ export function setHapticsMute(mute: boolean): void {
  */
 export async function isHapticsMuted(): Promise<boolean> {
   if (Platform.OS === 'ios') {
-    return await Hapticlabs.isHapticsMuted();
+    return await NativeHapticlabs.isHapticsMuted();
   } else {
     console.error('Haptics mute state is only supported on iOS');
     return false;
@@ -479,7 +475,7 @@ export async function isHapticsMuted(): Promise<boolean> {
  */
 export function setAudioMute(mute: boolean): void {
   if (Platform.OS === 'ios') {
-    Hapticlabs.setAudioMute(mute);
+    NativeHapticlabs.setAudioMute(mute);
   } else {
     console.error('Audio mute state is only supported on iOS');
   }
@@ -496,7 +492,7 @@ export function setAudioMute(mute: boolean): void {
  */
 export async function isAudioMuted(): Promise<boolean> {
   if (Platform.OS === 'ios') {
-    return await Hapticlabs.isAudioMuted();
+    return await NativeHapticlabs.isAudioMuted();
   } else {
     console.error('Audio mute state is only supported on iOS');
     return false;

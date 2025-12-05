@@ -1,8 +1,6 @@
 import AVFoundation
 import CoreHaptics
-import CoreNFC
 import Foundation
-import MobileCoreServices
 import React
 import UIKit
 import os
@@ -74,13 +72,13 @@ struct AHAP: Codable {
   }
 }
 
-@objc(Hapticlabs)
-class Hapticlabs: NSObject {
+@objc
+public class HapticlabsImpl: NSObject {
   var engine: CHHapticEngine?
   // Store AVAudioPlayers to keep them alive during playback
   var audioPlayersStore: [AVAudioPlayer]? = nil
 
-  override init() {
+  public override init() {
     super.init()
     createEngine()
   }
@@ -203,7 +201,7 @@ class Hapticlabs: NSObject {
         // and "WaveformPath" matching audio files to play directly
         // Delete those events from the AHAP, and record their timestamps
         if var fullAHAPDict = fullAHAP as? [String: Any],
-          var patternArray = fullAHAPDict["Pattern"] as? [[String: Any]]
+          let patternArray = fullAHAPDict["Pattern"] as? [[String: Any]]
         {
           var newPatternArray: [[String: Any]] = []
           for element in patternArray {
@@ -306,33 +304,33 @@ class Hapticlabs: NSObject {
   }
 
   @objc(setHapticsMute:)
-  func setHapticsMute(mute: Bool) {
+  public func setHapticsMute(mute: Bool) {
     // Mute haptics
     engine?.isMutedForHaptics = mute
   }
 
   @objc(setAudioMute:)
-  func setAudioMute(mute: Bool) {
+  public func setAudioMute(mute: Bool) {
     // Mute audio
     engine?.isMutedForAudio = mute
   }
 
   @objc(isHapticsMuted:withRejecter:)
-  func isHapticsMuted(
+  public func isHapticsMuted(
     resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock
   ) {
     resolve(engine?.isMutedForHaptics)
   }
 
   @objc(isAudioMuted:withRejecter:)
-  func isAudioMuted(
+  public func isAudioMuted(
     resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock
   ) {
     resolve(engine?.isMutedForAudio)
   }
 
   @objc(playAHAP:withResolver:withRejecter:)
-  func playAHAP(
+  public func playAHAP(
     ahapPath: String, resolve: @escaping RCTPromiseResolveBlock,
     reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -392,7 +390,7 @@ class Hapticlabs: NSObject {
   }
 
   @objc(playPredefinedIOSVibration:)
-  func playPredefinedIOSVibration(_ name: String) {
+  public func playPredefinedIOSVibration(_ name: String) {
     // Log the received data
     if name == "light" {
       let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)

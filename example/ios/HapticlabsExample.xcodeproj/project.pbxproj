@@ -15,7 +15,6 @@
 		4CE6274AC0E2FED9D3A752B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BA10C3BE39BCB24DB31FD75F /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B37E524654DD3E4325405CD7 /* libPods-HapticlabsExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B3AD87A9FA5D395A0044AB1 /* libPods-HapticlabsExample.a */; };
-		EE5BD13D999CB0CC970C02E3 /* libPods-HapticlabsExample-HapticlabsExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5E8D8E1FCCB6F1EAEB9D618 /* libPods-HapticlabsExample-HapticlabsExampleTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,13 +39,10 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = HapticlabsExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = HapticlabsExample/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = HapticlabsExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		454D3DC9D2C2CA86ABB46D83 /* Pods-HapticlabsExample-HapticlabsExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HapticlabsExample-HapticlabsExampleTests.release.xcconfig"; path = "Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		6B3AD87A9FA5D395A0044AB1 /* libPods-HapticlabsExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HapticlabsExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		80A6509082C1BDF1DAD3F4F9 /* Pods-HapticlabsExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HapticlabsExample.debug.xcconfig"; path = "Target Support Files/Pods-HapticlabsExample/Pods-HapticlabsExample.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = HapticlabsExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BA10C3BE39BCB24DB31FD75F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = HapticlabsExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		D5E8D8E1FCCB6F1EAEB9D618 /* libPods-HapticlabsExample-HapticlabsExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HapticlabsExample-HapticlabsExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E8C33D15AECE6004C0A9FD5B /* Pods-HapticlabsExample-HapticlabsExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HapticlabsExample-HapticlabsExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FCDA2FA64B0C7C2868D27275 /* Pods-HapticlabsExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HapticlabsExample.release.xcconfig"; path = "Target Support Files/Pods-HapticlabsExample/Pods-HapticlabsExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -56,7 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE5BD13D999CB0CC970C02E3 /* libPods-HapticlabsExample-HapticlabsExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,7 +104,6 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				6B3AD87A9FA5D395A0044AB1 /* libPods-HapticlabsExample.a */,
-				D5E8D8E1FCCB6F1EAEB9D618 /* libPods-HapticlabsExample-HapticlabsExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,8 +144,6 @@
 			children = (
 				80A6509082C1BDF1DAD3F4F9 /* Pods-HapticlabsExample.debug.xcconfig */,
 				FCDA2FA64B0C7C2868D27275 /* Pods-HapticlabsExample.release.xcconfig */,
-				E8C33D15AECE6004C0A9FD5B /* Pods-HapticlabsExample-HapticlabsExampleTests.debug.xcconfig */,
-				454D3DC9D2C2CA86ABB46D83 /* Pods-HapticlabsExample-HapticlabsExampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -163,12 +155,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "HapticlabsExampleTests" */;
 			buildPhases = (
-				48B217F8D1519DD04203EB96 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				381144BAC5910D028FC2F760 /* [CP] Embed Pods Frameworks */,
-				1730DF4D562377E7EB59CEBD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -214,7 +203,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1630;
 					};
 				};
 			};
@@ -274,62 +263,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\n# Source the environment variables\nif [ -f \"${SRCROOT}/.xcode.env.local\" ]; then\n  source \"${SRCROOT}/.xcode.env.local\"\nfi\n\n# Ensure NODE_BINARY is set\nif [ -z \"$NODE_BINARY\" ]; then\n  echo \"Error: NODE_BINARY is not set. Please set it in the .xcode.env.local file.\"\n  exit 1\nfi\n\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
-		};
-		1730DF4D562377E7EB59CEBD /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		381144BAC5910D028FC2F760 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HapticlabsExample-HapticlabsExampleTests/Pods-HapticlabsExample-HapticlabsExampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		48B217F8D1519DD04203EB96 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-HapticlabsExample-HapticlabsExampleTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 		512C93F0334A2D77A06E396D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -420,7 +353,6 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E8C33D15AECE6004C0A9FD5B /* Pods-HapticlabsExample-HapticlabsExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -447,7 +379,6 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 454D3DC9D2C2CA86ABB46D83 /* Pods-HapticlabsExample-HapticlabsExampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
