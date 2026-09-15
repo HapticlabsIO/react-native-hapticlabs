@@ -1,3 +1,6 @@
 {
-  "$schema": "https://unpkg.com/release-it@20/schema/release-it.json"
+  "$schema": "https://unpkg.com/release-it@20/schema/release-it.json",
+  "npm": {
+    "publish": false
+  }
 }
